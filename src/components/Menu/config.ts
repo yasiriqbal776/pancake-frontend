@@ -12,11 +12,19 @@ const config: MenuEntry[] = [
     items: [
       {
         label: 'Exchange',
-        href: 'https://exchange.pancakeswap.finance',
+        href: 'https://exchange.pancakeswap.finance/#/swap',
       },
       {
         label: 'Liquidity',
         href: 'https://exchange.pancakeswap.finance/#/pool',
+      },
+      {
+        label: 'LP Migration',
+        href: 'https://v1exchange.pancakeswap.finance/#/migrate',
+      },
+      {
+        label: 'V1 Liquidity (Old)',
+        href: 'https://v1exchange.pancakeswap.finance/#/pool',
       },
     ],
   },
@@ -31,6 +39,15 @@ const config: MenuEntry[] = [
     href: '/pools',
   },
   {
+    label: 'Prediction',
+    icon: 'PredictionsIcon',
+    href: '/prediction',
+    status: {
+      text: 'BETA',
+      color: 'warning',
+    },
+  },
+  {
     label: 'Lottery',
     icon: 'TicketIcon',
     href: '/lottery',
@@ -41,9 +58,13 @@ const config: MenuEntry[] = [
     href: '/collectibles',
   },
   {
+    label: 'Team Battle',
+    icon: 'TeamBattleIcon',
+    href: '/competition',
+  },
+  {
     label: 'Teams & Profile',
     icon: 'GroupsIcon',
-    calloutClass: 'rainbow',
     items: [
       {
         label: 'Leaderboard',
@@ -90,6 +111,10 @@ const config: MenuEntry[] = [
     label: 'More',
     icon: 'MoreIcon',
     items: [
+      {
+        label: 'Contact',
+        href: 'https://docs.pancakeswap.finance/contact-us',
+      },
       {
         label: 'Voting',
         href: 'https://voting.pancakeswap.finance',

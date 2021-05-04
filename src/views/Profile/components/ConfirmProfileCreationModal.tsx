@@ -1,18 +1,19 @@
 import React from 'react'
 import { Modal, Flex, Text } from '@pancakeswap-libs/uikit'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from 'state'
 import BigNumber from 'bignumber.js'
-import useI18n from 'hooks/useI18n'
-import { useCake, usePancakeRabbits, useProfile } from 'hooks/useContract'
+import { useTranslation } from 'contexts/Localization'
+import { useCake, useProfile } from 'hooks/useContract'
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
 import { fetchProfile } from 'state/profile'
-import { useToast } from 'state/hooks'
+import useToast from 'hooks/useToast'
 import { REGISTER_COST } from '../ProfileCreation/config'
 import ApproveConfirmButtons from './ApproveConfirmButtons'
+import { State } from '../ProfileCreation/contexts/types'
 
 interface Props {
   userName: string
-  tokenId: number
+  selectedNft: State['selectedNft']
   account: string
   teamId: number
   minimumCakeRequired: BigNumber
@@ -23,15 +24,14 @@ interface Props {
 const ConfirmProfileCreationModal: React.FC<Props> = ({
   account,
   teamId,
-  tokenId,
+  selectedNft,
   minimumCakeRequired,
   allowance,
   onDismiss,
 }) => {
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
   const profileContract = useProfile()
-  const pancakeRabbitsContract = usePancakeRabbits()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { toastSuccess } = useToast()
   const cakeContract = useCake()
 
@@ -57,7 +57,7 @@ const ConfirmProfileCreationModal: React.FC<Props> = ({
     },
     onConfirm: () => {
       return profileContract.methods
-        .createProfile(teamId, pancakeRabbitsContract.options.address, tokenId)
+        .createProfile(teamId, selectedNft.nftAddress, selectedNft.tokenId)
         .send({ from: account })
     },
     onSuccess: async () => {
@@ -70,11 +70,11 @@ const ConfirmProfileCreationModal: React.FC<Props> = ({
   return (
     <Modal title="Complete Profile" onDismiss={onDismiss}>
       <Text color="textSubtle" mb="8px">
-        {TranslateString(999, 'Submitting NFT to contract and confirming User Name and Team.')}
+        {t('Submitting NFT to contract and confirming User Name and Team.')}
       </Text>
       <Flex justifyContent="space-between" mb="16px">
-        <Text>{TranslateString(999, 'Cost')}</Text>
-        <Text>{TranslateString(999, `${REGISTER_COST} CAKE`, { num: REGISTER_COST })}</Text>
+        <Text>{t('Cost')}</Text>
+        <Text>{t(`${REGISTER_COST} CAKE`, { num: REGISTER_COST })}</Text>
       </Flex>
       <ApproveConfirmButtons
         isApproveDisabled={isConfirmed || isConfirming || isApproved}

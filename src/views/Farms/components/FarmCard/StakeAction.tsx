@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { Button, Flex, Heading, IconButton, AddIcon, MinusIcon, useModal } from '@pancakeswap-libs/uikit'
-import useI18n from 'hooks/useI18n'
+import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'contexts/Localization'
 import useStake from 'hooks/useStake'
 import useUnstake from 'hooks/useUnstake'
-import { getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import DepositModal from '../DepositModal'
 import WithdrawModal from '../WithdrawModal'
 
@@ -31,12 +32,18 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
   pid,
   addLiquidityUrl,
 }) => {
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
   const { onStake } = useStake(pid)
   const { onUnstake } = useUnstake(pid)
+  const location = useLocation()
 
-  const rawStakedBalance = getBalanceNumber(stakedBalance)
-  const displayBalance = rawStakedBalance.toLocaleString()
+  const displayBalance = useCallback(() => {
+    const stakedBalanceNumber = getBalanceNumber(stakedBalance)
+    if (stakedBalanceNumber > 0 && stakedBalanceNumber < 0.0001) {
+      return getFullDisplayBalance(stakedBalance).toLocaleString()
+    }
+    return stakedBalanceNumber.toLocaleString()
+  }, [stakedBalance])
 
   const [onPresentDeposit] = useModal(
     <DepositModal max={tokenBalance} onConfirm={onStake} tokenName={tokenName} addLiquidityUrl={addLiquidityUrl} />,
@@ -46,8 +53,10 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
   )
 
   const renderStakingButtons = () => {
-    return rawStakedBalance === 0 ? (
-      <Button onClick={onPresentDeposit}>{TranslateString(999, 'Stake LP')}</Button>
+    return stakedBalance.eq(0) ? (
+      <Button onClick={onPresentDeposit} disabled={location.pathname.includes('archived')}>
+        {t('Stake LP')}
+      </Button>
     ) : (
       <IconButtonWrapper>
         <IconButton variant="tertiary" onClick={onPresentWithdraw} mr="6px">
@@ -62,7 +71,7 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
 
   return (
     <Flex justifyContent="space-between" alignItems="center">
-      <Heading color={rawStakedBalance === 0 ? 'textDisabled' : 'text'}>{displayBalance}</Heading>
+      <Heading color={stakedBalance.eq(0) ? 'textDisabled' : 'text'}>{displayBalance()}</Heading>
       {renderStakingButtons()}
     </Flex>
   )

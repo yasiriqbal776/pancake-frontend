@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Heading, CardBody, CardFooter, PancakeRoundIcon, TicketRound } from '@pancakeswap-libs/uikit'
-import useI18n from 'hooks/useI18n'
+import { useTranslation } from 'contexts/Localization'
 import { DataResponse } from 'utils/getLotteryRoundData'
 import LotteryCardHeading from '../LotteryCardHeading'
 import PastLotteryActions from './PastLotteryActions'
@@ -24,7 +24,7 @@ const TopLotteryCardHeading = styled(LotteryCardHeading)`
 `
 
 const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => {
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
 
   const {
     contractLink,
@@ -32,7 +32,6 @@ const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => 
     lotteryDate,
     lotteryNumber,
     lotteryNumbers,
-    match1Ticket,
     match2Ticket,
     match3Ticket,
     poolSize,
@@ -52,13 +51,10 @@ const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => 
               valueToDisplay={`${lotteryNumbers[0]}, ${lotteryNumbers[1]}, ${lotteryNumbers[2]}, ${lotteryNumbers[3]}`}
               Icon={TicketRound}
             >
-              {TranslateString(999, 'Winning numbers')}
+              {t('Winning numbers')}
             </TopLotteryCardHeading>
-            <LotteryCardHeading
-              valueToDisplay={TranslateString(999, `${poolSize.toLocaleString()} CAKE`)}
-              Icon={PancakeRoundIcon}
-            >
-              {TranslateString(999, 'Total prizes')}
+            <LotteryCardHeading valueToDisplay={t(`${poolSize.toLocaleString()} CAKE`)} Icon={PancakeRoundIcon}>
+              {t('Total prizes')}
             </LotteryCardHeading>
           </CardHeading>
         </CardBody>
@@ -66,7 +62,6 @@ const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => 
           <PrizeGrid
             lotteryPrizeAmount={poolSize}
             jackpotMatches={jackpotTicket}
-            oneTicketMatches={match1Ticket}
             twoTicketMatches={match2Ticket}
             threeTicketMatches={match3Ticket}
             pastDraw

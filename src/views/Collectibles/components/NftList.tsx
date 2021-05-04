@@ -1,70 +1,45 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import orderBy from 'lodash/orderBy'
-import nfts from 'config/constants/nfts'
 import { useWeb3React } from '@web3-react/core'
-import { getBunnySpecialContract } from 'utils/contractHelpers'
-import useGetWalletNfts from 'hooks/useGetWalletNfts'
-import makeBatchRequest from 'utils/makeBatchRequest'
-import { useToast } from 'state/hooks'
+import nfts from 'config/constants/nfts'
+import { useAppDispatch } from 'state'
+import { fetchWalletNfts } from 'state/collectibles'
+import { useGetCollectibles } from 'state/hooks'
 import NftCard from './NftCard'
 import NftGrid from './NftGrid'
+import BunnySpeciaCard from './NftCard/BunnySpecialCard'
+import EasterNftCard from './NftCard/EasterNftCard'
 
-type State = {
-  [key: string]: boolean
+/**
+ * A map of bunnyIds to special campaigns (NFT distribution)
+ * Each NftCard is responsible for checking it's own claim status
+ *
+ */
+const nftComponents = {
+  hiccup: BunnySpeciaCard,
+  bullish: BunnySpeciaCard,
+  'easter-storm': EasterNftCard,
+  'easter-flipper': EasterNftCard,
+  'easter-caker': EasterNftCard,
 }
 
-const bunnySpecialContract = getBunnySpecialContract()
-
 const NftList = () => {
-  const [claimableNfts, setClaimableNfts] = useState<State>({})
-  const { nfts: nftTokenIds, refresh } = useGetWalletNfts()
+  const { tokenIds } = useGetCollectibles()
+  const dispatch = useAppDispatch()
   const { account } = useWeb3React()
-  const { toastError } = useToast()
 
-  const fetchClaimableStatuses = useCallback(
-    async (walletAddress: string) => {
-      try {
-        const claimStatuses = (await makeBatchRequest(
-          nfts.map((nft) => {
-            return bunnySpecialContract.methods.canClaimSingle(walletAddress, nft.bunnyId).call
-          }),
-        )) as boolean[]
-
-        setClaimableNfts(
-          claimStatuses.reduce((accum, claimStatus, index) => {
-            return {
-              ...accum,
-              [nfts[index].bunnyId]: claimStatus,
-            }
-          }, {}),
-        )
-      } catch (error) {
-        console.error(error)
-        toastError('Error checking NFT claimable status')
-      }
-    },
-    [setClaimableNfts, toastError],
-  )
-
-  const handleSuccess = () => {
-    refresh()
-    fetchClaimableStatuses(account)
+  const handleRefresh = () => {
+    dispatch(fetchWalletNfts(account))
   }
-
-  useEffect(() => {
-    if (account) {
-      fetchClaimableStatuses(account)
-    }
-  }, [account, fetchClaimableStatuses])
 
   return (
     <NftGrid>
       {orderBy(nfts, 'sortOrder').map((nft) => {
-        const tokenIds = nftTokenIds[nft.bunnyId] ? nftTokenIds[nft.bunnyId].tokenIds : []
+        const Card = nftComponents[nft.identifier] ?? NftCard
 
         return (
           <div key={nft.name}>
-            <NftCard nft={nft} canClaim={claimableNfts[nft.bunnyId]} tokenIds={tokenIds} onSuccess={handleSuccess} />
+            <Card nft={nft} tokenIds={tokenIds[nft.identifier]} refresh={handleRefresh} />
           </div>
         )
       })}

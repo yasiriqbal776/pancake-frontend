@@ -46,13 +46,13 @@ _In order for the Crowdin API queries to work - you will need `REACT_APP_CROWDIN
 A hook expose the function you need to translate content.
 
 ```
-import useI18n from 'hooks/useI18n'
+import { useTranslation } from 'contexts/Localization'
 
 ...
-const TranslateString = useI18n()
+const { t } =  useTranslation()
 ...
 
-TranslateString(id, 'fallback', data)
+t(id, 'fallback', data)
 ```
 
 - **id** is the crowdin id of the string you want to translate.
@@ -64,7 +64,7 @@ TranslateString(id, 'fallback', data)
 If a Crowdin translation like this `You have %num% left in your wallet` - would look something like:
 
 ```
-TranslateString(675, `You have ${cakeBalance} left in your wallet`, { num: cakeBalance })
+t(675, `You have ${cakeBalance} left in your wallet`, { num: cakeBalance })
 ```
 
 ## Issue reports
@@ -83,7 +83,7 @@ Guidelines for bug reports:
 3. **Isolate the problem** &mdash; create a [reduced test
    case](http://css-tricks.com/reduced-test-cases/) and a live example.
 
-4. **Add attachments**  &mdash; add photos or videos 
+4. **Add attachments** &mdash; add photos or videos
 
 A good bug report shouldn't leave others needing to chase you up for more
 information. Please try to be as detailed as possible in your report. What is
@@ -92,15 +92,16 @@ experience the problem? What would you expect to be the outcome? All these
 details will help people to fix any potential bugs.
 
 Template:
+
 ```
 **Environment:**
 Device and OS:
 Browser:
 Reproducibility rate:
 
-**Steps to reproduce:** 
-1. 
-2. 
+**Steps to reproduce:**
+1.
+2.
 3.
 
 **Expected result:**

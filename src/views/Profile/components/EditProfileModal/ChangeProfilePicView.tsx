@@ -1,27 +1,30 @@
 import React, { useState } from 'react'
 import { Button, InjectedModalProps, Skeleton, Text } from '@pancakeswap-libs/uikit'
 import { useWeb3React } from '@web3-react/core'
-import { useDispatch } from 'react-redux'
-import nftList from 'config/constants/nfts'
-import { useProfile, useToast } from 'state/hooks'
-import useI18n from 'hooks/useI18n'
+import { useAppDispatch } from 'state'
+import { useGetCollectibles, useProfile } from 'state/hooks'
+import { useTranslation } from 'contexts/Localization'
+import useToast from 'hooks/useToast'
 import { fetchProfile } from 'state/profile'
-import useGetWalletNfts from 'hooks/useGetWalletNfts'
+import { getAddressByType } from 'utils/collectibles'
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
-import { usePancakeRabbits, useProfile as useProfileContract } from 'hooks/useContract'
-import { getPancakeProfileAddress, getPancakeRabbitsAddress } from 'utils/addressHelpers'
+import { useERC721, useProfile as useProfileContract } from 'hooks/useContract'
+import { getPancakeProfileAddress } from 'utils/addressHelpers'
 import SelectionCard from '../SelectionCard'
 import ApproveConfirmButtons from '../ApproveConfirmButtons'
 
 type ChangeProfilePicPageProps = InjectedModalProps
 
 const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }) => {
-  const [tokenId, setTokenId] = useState(null)
-  const TranslateString = useI18n()
-  const { isLoading, nfts: nftsInWallet } = useGetWalletNfts()
-  const dispatch = useDispatch()
+  const [selectedNft, setSelectedNft] = useState({
+    tokenId: null,
+    nftAddress: null,
+  })
+  const { t } = useTranslation()
+  const { isLoading, tokenIds, nftsInWallet } = useGetCollectibles()
+  const dispatch = useAppDispatch()
   const { profile } = useProfile()
-  const pancakeRabbitsContract = usePancakeRabbits()
+  const contract = useERC721(selectedNft.nftAddress)
   const profileContract = useProfileContract()
   const { account } = useWeb3React()
   const { toastSuccess } = useToast()
@@ -34,14 +37,16 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
     handleConfirm,
   } = useApproveConfirmTransaction({
     onApprove: () => {
-      return pancakeRabbitsContract.methods.approve(getPancakeProfileAddress(), tokenId).send({ from: account })
+      return contract.methods.approve(getPancakeProfileAddress(), selectedNft.tokenId).send({ from: account })
     },
     onConfirm: () => {
       if (!profile.isActive) {
-        return profileContract.methods.reactivateProfile(getPancakeRabbitsAddress(), tokenId).send({ from: account })
+        return profileContract.methods
+          .reactivateProfile(selectedNft.nftAddress, selectedNft.tokenId)
+          .send({ from: account })
       }
 
-      return profileContract.methods.updateProfile(getPancakeRabbitsAddress(), tokenId).send({ from: account })
+      return profileContract.methods.updateProfile(selectedNft.nftAddress, selectedNft.tokenId).send({ from: account })
     },
     onSuccess: async () => {
       // Re-fetch profile
@@ -51,28 +56,32 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
       onDismiss()
     },
   })
-  const bunnyIds = Object.keys(nftsInWallet).map((nftWalletItem) => Number(nftWalletItem))
-  const walletNfts = nftList.filter((nft) => bunnyIds.includes(nft.bunnyId))
 
   return (
     <>
       <Text as="p" color="textSubtle" mb="24px">
-        {TranslateString(999, 'Choose a new Collectible to use as your profile pic.')}
+        {t('Choose a new Collectible to use as your profile pic.')}
       </Text>
       {isLoading ? (
         <Skeleton height="80px" mb="16px" />
       ) : (
-        walletNfts.map((walletNft) => {
-          const [firstTokenId] = nftsInWallet[walletNft.bunnyId].tokenIds
+        nftsInWallet.map((walletNft) => {
+          const [firstTokenId] = tokenIds[walletNft.identifier]
+          const handleChange = (value: string) => {
+            setSelectedNft({
+              tokenId: Number(value),
+              nftAddress: getAddressByType(walletNft.type),
+            })
+          }
 
           return (
             <SelectionCard
               name="profilePicture"
-              key={walletNft.bunnyId}
+              key={walletNft.identifier}
               value={firstTokenId}
               image={`/images/nfts/${walletNft.images.md}`}
-              isChecked={firstTokenId === tokenId}
-              onChange={(value: string) => setTokenId(parseInt(value, 10))}
+              isChecked={firstTokenId === selectedNft.tokenId}
+              onChange={handleChange}
               disabled={isApproving || isConfirming || isConfirmed}
             >
               <Text bold>{walletNft.name}</Text>
@@ -80,26 +89,26 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
           )
         })
       )}
-      {!isLoading && walletNfts.length === 0 && (
+      {!isLoading && nftsInWallet.length === 0 && (
         <>
           <Text as="p" color="textSubtle" mb="16px">
-            {TranslateString(999, 'Sorry! You don’t have any eligible Collectibles in your wallet to use!')}
+            {t('Sorry! You don’t have any eligible Collectibles in your wallet to use!')}
           </Text>
           <Text as="p" color="textSubtle" mb="24px">
-            {TranslateString(999, 'Make sure you have a Pancake Collectible in your wallet and try again!')}
+            {t('Make sure you have a Pancake Collectible in your wallet and try again!')}
           </Text>
         </>
       )}
       <ApproveConfirmButtons
-        isApproveDisabled={isConfirmed || isConfirming || isApproved || tokenId === null}
+        isApproveDisabled={isConfirmed || isConfirming || isApproved || selectedNft.tokenId === null}
         isApproving={isApproving}
-        isConfirmDisabled={!isApproved || isConfirmed || tokenId === null}
+        isConfirmDisabled={!isApproved || isConfirmed || selectedNft.tokenId === null}
         isConfirming={isConfirming}
         onApprove={handleApprove}
         onConfirm={handleConfirm}
       />
       <Button variant="text" width="100%" onClick={onDismiss} disabled={isApproving || isConfirming}>
-        {TranslateString(999, 'Close Window')}
+        {t('Close Window')}
       </Button>
     </>
   )

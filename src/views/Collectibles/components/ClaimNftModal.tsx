@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { PromiEvent } from 'web3-core'
+import { Contract } from 'web3-eth-contract'
 import { useWeb3React } from '@web3-react/core'
-import { useBunnySpecialContract } from 'hooks/useContract'
-import { useToast } from 'state/hooks'
-import { Button, InjectedModalProps, Modal, Text, Flex } from '@pancakeswap-libs/uikit'
+import { Button, InjectedModalProps, Modal, Text, Flex, AutoRenewIcon } from '@pancakeswap-libs/uikit'
 import { Nft } from 'config/constants/types'
-import useI18n from 'hooks/useI18n'
+import { useTranslation } from 'contexts/Localization'
+import useToast from 'hooks/useToast'
 
 interface ClaimNftModalProps extends InjectedModalProps {
   nft: Nft
   onSuccess: () => void
+  onClaim: () => PromiEvent<Contract>
 }
 
 const ModalContent = styled.div`
@@ -22,26 +24,23 @@ const Actions = styled.div`
   grid-gap: 8px;
 `
 
-const ClaimNftModal: React.FC<ClaimNftModalProps> = ({ nft, onSuccess, onDismiss }) => {
+const ClaimNftModal: React.FC<ClaimNftModalProps> = ({ nft, onSuccess, onClaim, onDismiss }) => {
   const [isConfirming, setIsConfirming] = useState(false)
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
   const { account } = useWeb3React()
   const { toastError, toastSuccess } = useToast()
-  const bunnySpecialContract = useBunnySpecialContract()
 
   const handleConfirm = async () => {
-    bunnySpecialContract.methods
-      .mintNFT(nft.bunnyId)
-      .send({ from: account })
-      .on('sending', () => {
+    onClaim()
+      .once('sending', () => {
         setIsConfirming(true)
       })
-      .on('receipt', () => {
+      .once('receipt', () => {
         toastSuccess('Successfully claimed!')
         onDismiss()
         onSuccess()
       })
-      .on('error', (error) => {
+      .once('error', (error) => {
         console.error('Unable to claim NFT', error)
         toastError('Error', 'Unable to claim NFT, please try again.')
         setIsConfirming(false)
@@ -49,19 +48,25 @@ const ClaimNftModal: React.FC<ClaimNftModalProps> = ({ nft, onSuccess, onDismiss
   }
 
   return (
-    <Modal title={TranslateString(999, 'Claim Collectible')} onDismiss={onDismiss}>
+    <Modal title={t('Claim Collectible')} onDismiss={onDismiss}>
       <ModalContent>
         <Flex alignItems="center" mb="8px" justifyContent="space-between">
-          <Text>{TranslateString(626, 'You will receive')}:</Text>
+          <Text>{t('You will receive')}:</Text>
           <Text bold>{`1x "${nft.name}" Collectible`}</Text>
         </Flex>
       </ModalContent>
       <Actions>
         <Button width="100%" variant="secondary" onClick={onDismiss}>
-          {TranslateString(462, 'Cancel')}
+          {t('Cancel')}
         </Button>
-        <Button width="100%" onClick={handleConfirm} disabled={!account || isConfirming}>
-          {TranslateString(464, 'Confirm')}
+        <Button
+          width="100%"
+          onClick={handleConfirm}
+          disabled={!account}
+          isLoading={isConfirming}
+          endIcon={isConfirming ? <AutoRenewIcon color="currentColor" spin /> : null}
+        >
+          {t('Confirm')}
         </Button>
       </Actions>
     </Modal>

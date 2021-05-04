@@ -4,7 +4,6 @@ import { ResetCSS } from '@pancakeswap-libs/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { useFetchPriceList, useFetchProfile, useFetchPublicData } from 'state/hooks'
-import useGetDocumentTitlePrice from './hooks/useGetDocumentTitlePrice'
 import GlobalStyle from './style/Global'
 import Menu from './components/Menu'
 import SuspenseWithChunkError from './components/SuspenseWithChunkError'
@@ -12,7 +11,6 @@ import ToastListener from './components/ToastListener'
 import PageLoader from './components/PageLoader'
 import EasterEgg from './components/EasterEgg'
 import Pools from './views/Pools'
-import GlobalCheckBullHiccupClaimStatus from './views/Collectibles/components/GlobalCheckBullHiccupClaimStatus'
 import history from './routerHistory'
 
 // Route-based code splitting
@@ -26,6 +24,8 @@ const Collectibles = lazy(() => import('./views/Collectibles'))
 const Teams = lazy(() => import('./views/Teams'))
 const Team = lazy(() => import('./views/Teams/Team'))
 const Profile = lazy(() => import('./views/Profile'))
+const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
+const Predictions = lazy(() => import('./views/Predictions'))
 
 // This config is required for number formating
 BigNumber.config({
@@ -44,7 +44,6 @@ const App: React.FC = () => {
   useFetchPublicData()
   useFetchProfile()
   useFetchPriceList()
-  useGetDocumentTitlePrice()
 
   return (
     <Router history={history}>
@@ -80,6 +79,12 @@ const App: React.FC = () => {
             <Route path="/profile">
               <Profile />
             </Route>
+            <Route path="/competition">
+              <TradingCompetition />
+            </Route>
+            <Route path="/prediction">
+              <Predictions />
+            </Route>
             {/* Redirect */}
             <Route path="/staking">
               <Redirect to="/pools" />
@@ -97,7 +102,6 @@ const App: React.FC = () => {
       </Menu>
       <EasterEgg iterations={2} />
       <ToastListener />
-      <GlobalCheckBullHiccupClaimStatus />
     </Router>
   )
 }

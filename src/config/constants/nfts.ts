@@ -1,6 +1,129 @@
-import { Nft } from './types'
+import { Nft, NftSource, NftType } from './types'
+
+export const IPFS_GATEWAY = 'https://gateway.pinata.cloud'
+
+export const nftSources: NftSource = {
+  [NftType.PANCAKE]: {
+    address: {
+      56: '0xDf7952B35f24aCF7fC0487D01c8d5690a60DBa07',
+      97: '0x60935F36e4631F73f0f407e68642144e07aC7f5E',
+    },
+    identifierKey: 'image',
+  },
+  [NftType.MIXIE]: {
+    address: {
+      56: '0xa251b5EAa9E67F2Bc8b33F33e20E91552Bf85566',
+      97: '',
+    },
+    identifierKey: 'image',
+  },
+}
 
 const Nfts: Nft[] = [
+  {
+    name: 'Mixie v1',
+    description: 'Stories were told, and songs were sung, about Chef Mixie’s pancakes and her big Syrup gun.',
+    images: {
+      lg: 'mixie-1-lg.png',
+      md: 'mixie-1-md.png',
+      sm: 'mixie-1-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmQiRpr7ZMkzV7qbqVaUZ1LiuHTTdpWmapUhaY6ZGmVLQ4/001-Chef-Mixie.png',
+    },
+    sortOrder: 999,
+    identifier: '001-Chef-Mixie',
+    type: NftType.MIXIE,
+    variationId: 1,
+  },
+  {
+    name: 'Mixie v2',
+    description: 'Stories were told, and songs were sung, about Chef Mixie’s pancakes and her big Syrup gun.',
+    images: {
+      lg: 'mixie-2-lg.png',
+      md: 'mixie-2-md.png',
+      sm: 'mixie-2-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmQiRpr7ZMkzV7qbqVaUZ1LiuHTTdpWmapUhaY6ZGmVLQ4/002-Chef-Mixie.png',
+    },
+    sortOrder: 999,
+    identifier: '002-Chef-Mixie',
+    type: NftType.MIXIE,
+    variationId: 2,
+  },
+  {
+    name: 'Mixie v3',
+    description: 'Stories were told, and songs were sung, about Chef Mixie’s pancakes and her big Syrup gun.',
+    images: {
+      lg: 'mixie-3-lg.png',
+      md: 'mixie-3-md.png',
+      sm: 'mixie-3-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmQiRpr7ZMkzV7qbqVaUZ1LiuHTTdpWmapUhaY6ZGmVLQ4/003-Chef-Mixie.png',
+    },
+    sortOrder: 999,
+    identifier: '003-Chef-Mixie',
+    type: NftType.MIXIE,
+    variationId: 3,
+  },
+  {
+    name: 'Easter ‘21 Champions',
+    description: 'Eggscellent! Celebrating Syrup Storm winning the Easter Battle!',
+    images: {
+      lg: 'easter-champion-storm-lg.png',
+      md: 'easter-champion-storm-md.png',
+      sm: 'easter-champion-storm-sm.png',
+      ipfs:
+        'https://gateway.pinata.cloud/ipfs/QmWFQdggxnAkgFNBWixT6v7nrgEnYfYDxG5A9u42aHhU6U/easter-champion-storm.png',
+    },
+    video: {
+      webm:
+        'https://gateway.pinata.cloud/ipfs/QmWFQdggxnAkgFNBWixT6v7nrgEnYfYDxG5A9u42aHhU6U/easter-champion-storm.webm',
+      mp4: 'https://gateway.pinata.cloud/ipfs/QmWFQdggxnAkgFNBWixT6v7nrgEnYfYDxG5A9u42aHhU6U/easter-champion-storm.mp4',
+    },
+    sortOrder: 999,
+    identifier: 'easter-champion-storm',
+    type: NftType.PANCAKE,
+    variationId: 15,
+  },
+  {
+    name: "Cakeston Easter '21",
+    description: 'Melting Easter eggs and melting hearts!',
+    images: {
+      lg: 'cakeston-easter-21-lg.png',
+      md: 'cakeston-easter-21-md.png',
+      sm: 'cakeston-easter-21-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmZGqWaovULNEMKxBCGnGjh27JQkAyadS6AW4J4Lzf3XBp/easter-caker.png',
+    },
+    sortOrder: 999,
+    identifier: 'easter-caker',
+    type: NftType.PANCAKE,
+    variationId: 15,
+  },
+  {
+    name: "Flipsie Easter '21",
+    description: 'Watch out for Flipsie’s spatula smash!',
+    images: {
+      lg: 'flipsie-easter-21-lg.png',
+      md: 'flipsie-easter-21-md.png',
+      sm: 'flipsie-easter-21-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmZGqWaovULNEMKxBCGnGjh27JQkAyadS6AW4J4Lzf3XBp/easter-flipper.png',
+    },
+    sortOrder: 999,
+    identifier: 'easter-flipper',
+    type: NftType.PANCAKE,
+    variationId: 14,
+  },
+  {
+    name: "Stormy Easter '21",
+    description: 'Do you like chocolate with your syrup? Go long!',
+    images: {
+      lg: 'stormy-easter-21-lg.png',
+      md: 'stormy-easter-21-md.png',
+      sm: 'stormy-easter-21-sm.png',
+      ipfs: 'https://gateway.pinata.cloud/ipfs/QmZGqWaovULNEMKxBCGnGjh27JQkAyadS6AW4J4Lzf3XBp/easter-storm.png',
+    },
+    sortOrder: 999,
+    identifier: 'easter-storm',
+    type: NftType.PANCAKE,
+    variationId: 12,
+  },
   {
     name: 'Bullish',
     description: 'Happy Niu Year! This bunny’s excited for the year of the bull (market!)',
@@ -15,7 +138,9 @@ const Nfts: Nft[] = [
       mp4: 'https://gateway.pinata.cloud/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.mp4',
     },
     sortOrder: 999,
-    bunnyId: 11,
+    identifier: 'bullish',
+    type: NftType.PANCAKE,
+    variationId: 11,
   },
   {
     name: 'Hiccup',
@@ -27,7 +152,9 @@ const Nfts: Nft[] = [
       ipfs: 'https://gateway.pinata.cloud/ipfs/QmQ6EE6gkVzAQUdQLLM7CyrnME6LZHCoy92ZERW8HXmyjw/hiccup.png',
     },
     sortOrder: 999,
-    bunnyId: 10,
+    identifier: 'hiccup',
+    type: NftType.PANCAKE,
+    variationId: 10,
   },
   {
     name: 'Sleepy',
@@ -40,7 +167,9 @@ const Nfts: Nft[] = [
       blur: 'sleepy-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 5,
+    identifier: 'sleepy',
+    type: NftType.PANCAKE,
+    variationId: 5,
   },
   {
     name: 'Sunny',
@@ -53,7 +182,9 @@ const Nfts: Nft[] = [
       blur: 'sunny-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 9,
+    identifier: 'sunny',
+    type: NftType.PANCAKE,
+    variationId: 9,
   },
   {
     name: 'Churro',
@@ -66,7 +197,9 @@ const Nfts: Nft[] = [
       blur: 'churro-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 8,
+    identifier: 'churro',
+    type: NftType.PANCAKE,
+    variationId: 8,
   },
   {
     name: 'Dollop',
@@ -79,7 +212,9 @@ const Nfts: Nft[] = [
       blur: 'dollop-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 6,
+    identifier: 'dollop',
+    type: NftType.PANCAKE,
+    variationId: 6,
   },
   {
     name: 'Twinkle',
@@ -92,7 +227,9 @@ const Nfts: Nft[] = [
       blur: 'twinkle-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 7,
+    identifier: 'twinkle',
+    type: NftType.PANCAKE,
+    variationId: 7,
   },
   {
     name: 'Swapsies',
@@ -105,7 +242,9 @@ const Nfts: Nft[] = [
       blur: 'swapsies-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 0,
+    identifier: 'swapsies',
+    type: NftType.PANCAKE,
+    variationId: 0,
   },
   {
     name: 'Drizzle',
@@ -118,7 +257,9 @@ const Nfts: Nft[] = [
       blur: 'drizzle-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 1,
+    identifier: 'drizzle',
+    type: NftType.PANCAKE,
+    variationId: 1,
   },
   {
     name: 'Blueberries',
@@ -131,7 +272,9 @@ const Nfts: Nft[] = [
       blur: 'blueberries-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 2,
+    identifier: 'blueberries',
+    type: NftType.PANCAKE,
+    variationId: 2,
   },
   {
     name: 'Circular',
@@ -144,7 +287,9 @@ const Nfts: Nft[] = [
       blur: 'circular-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 3,
+    identifier: 'circular',
+    type: NftType.PANCAKE,
+    variationId: 3,
   },
   {
     name: 'Sparkle',
@@ -157,7 +302,9 @@ const Nfts: Nft[] = [
       blur: 'sparkle-blur.png',
     },
     sortOrder: 999,
-    bunnyId: 4,
+    identifier: 'sparkle',
+    type: NftType.PANCAKE,
+    variationId: 4,
   },
 ]
 

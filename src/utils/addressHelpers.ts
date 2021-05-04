@@ -15,7 +15,7 @@ export const getMasterChefAddress = () => {
   return getAddress(addresses.masterChef)
 }
 export const getMulticallAddress = () => {
-  return getAddress(addresses.mulltiCall)
+  return getAddress(addresses.multiCall)
 }
 export const getWbnbAddress = () => {
   return getAddress(tokens.wbnb.address)
@@ -43,4 +43,16 @@ export const getPointCenterIfoAddress = () => {
 }
 export const getBunnySpecialAddress = () => {
   return getAddress(addresses.bunnySpecial)
+}
+export const getTradingCompetitionAddress = () => {
+  return getAddress(addresses.tradingCompetition)
+}
+export const getEasterNftAddress = () => {
+  return getAddress(addresses.easterNft)
+}
+export const getCakeVaultAddress = () => {
+  return getAddress(addresses.cakeVault)
+}
+export const getPredictionsAddress = () => {
+  return getAddress(addresses.predictions)
 }

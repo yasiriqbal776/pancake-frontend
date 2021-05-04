@@ -7,27 +7,46 @@ import {
   getBunnySpecialContract,
   getPancakeRabbitContract,
   getProfileContract,
-  getIfoContract,
+  getIfoV1Contract,
+  getIfoV2Contract,
   getLotteryContract,
   getLotteryTicketContract,
   getMasterchefContract,
   getPointCenterIfoContract,
   getSouschefContract,
   getClaimRefundContract,
+  getTradingCompetitionContract,
+  getEasterNftContract,
+  getErc721Contract,
+  getCakeVaultContract,
+  getPredictionsContract,
 } from 'utils/contractHelpers'
 
 /**
  * Helper hooks to get specific contracts (by ABI)
  */
 
-export const useIfoContract = (address: string) => {
+export const useIfoV1Contract = (address: string) => {
   const web3 = useWeb3()
-  return useMemo(() => getIfoContract(address, web3), [address, web3])
+  return useMemo(() => getIfoV1Contract(address, web3), [address, web3])
+}
+
+export const useIfoV2Contract = (address: string) => {
+  const web3 = useWeb3()
+  return useMemo(() => getIfoV2Contract(address, web3), [address, web3])
 }
 
 export const useERC20 = (address: string) => {
   const web3 = useWeb3()
   return useMemo(() => getBep20Contract(address, web3), [address, web3])
+}
+
+/**
+ * @see https://docs.openzeppelin.com/contracts/3.x/api/token/erc721
+ */
+export const useERC721 = (address: string) => {
+  const web3 = useWeb3()
+  return useMemo(() => getErc721Contract(address, web3), [address, web3])
 }
 
 export const useCake = () => {
@@ -83,4 +102,24 @@ export const useBunnySpecialContract = () => {
 export const useClaimRefundContract = () => {
   const web3 = useWeb3()
   return useMemo(() => getClaimRefundContract(web3), [web3])
+}
+
+export const useTradingCompetitionContract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getTradingCompetitionContract(web3), [web3])
+}
+
+export const useEasterNftContract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getEasterNftContract(web3), [web3])
+}
+
+export const useCakeVaultContract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getCakeVaultContract(web3), [web3])
+}
+
+export const usePredictionsContract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getPredictionsContract(web3), [web3])
 }

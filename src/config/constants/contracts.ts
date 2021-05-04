@@ -15,7 +15,7 @@ export default {
     97: '0x8175c10383511b3a1C68f9dB222dc14A19CC950e',
     56: '0x5e74094Cd416f55179DBd0E45b1a8ED030e396A1',
   },
-  mulltiCall: {
+  multiCall: {
     56: '0x1ee38d535d541c55c9dae27b12edf090c608e6fb',
     97: '0x67ADCB4dF3931b0C5Da724058ADC2174a9844412',
   },
@@ -42,5 +42,21 @@ export default {
   bunnySpecial: {
     56: '0xFee8A195570a18461146F401d6033f5ab3380849',
     97: '0x7b7b1583De1DeB32Ce6605F6deEbF24A0671c17C',
+  },
+  tradingCompetition: {
+    56: '0xd718baa0B1F4f70dcC8458154042120FFE0DEFFA',
+    97: '0xC787F45B833721ED3aC46E99b703B3E1E01abb97',
+  },
+  easterNft: {
+    56: '0x23c41D28A239dDCAABd1bb1deF8d057189510066',
+    97: '0x24ec6962dbe874F6B67B5C50857565667fA0854F',
+  },
+  cakeVault: {
+    56: '0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC',
+    97: '',
+  },
+  predictions: {
+    56: '0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b',
+    97: '0x4f3140C74789F1D809420343ea83BcE52B7bbAA5',
   },
 }

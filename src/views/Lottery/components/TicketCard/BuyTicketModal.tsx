@@ -2,34 +2,36 @@ import BigNumber from 'bignumber.js'
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Button, Modal } from '@pancakeswap-libs/uikit'
-import { getFullDisplayBalance } from 'utils/formatBalance'
+import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import TicketInput from 'components/TicketInput'
 import ModalActions from 'components/ModalActions'
 import { useMultiBuyLottery, useMaxNumber } from 'hooks/useBuyLottery'
-import useI18n from 'hooks/useI18n'
+import { useTranslation } from 'contexts/Localization'
 import { LOTTERY_MAX_NUMBER_OF_TICKETS, LOTTERY_TICKET_PRICE } from 'config'
 
 interface BuyTicketModalProps {
   max: BigNumber
-  onConfirm?: (amount: string, numbers: Array<number>) => void
   onDismiss?: () => void
-  tokenName?: string
 }
 
 const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ max, onDismiss }) => {
   const [val, setVal] = useState('1')
   const [pendingTx, setPendingTx] = useState(false)
   const [, setRequestedBuy] = useState(false)
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
   const fullBalance = useMemo(() => {
-    return getFullDisplayBalance(max)
+    return getBalanceNumber(max)
   }, [max])
 
   const maxTickets = useMemo(() => {
     return parseInt(getFullDisplayBalance(max.div(LOTTERY_TICKET_PRICE)), 10)
   }, [max])
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => setVal(e.currentTarget.value)
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.validity.valid) {
+      setVal(e.currentTarget.value)
+    }
+  }
 
   const { onMultiBuy } = useMultiBuyLottery()
   const maxNumber = useMaxNumber()
@@ -67,7 +69,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ max, onDismiss }) => {
     return +amount * LOTTERY_TICKET_PRICE
   }
   return (
-    <Modal title={TranslateString(450, 'Enter amount of tickets to buy')} onDismiss={onDismiss}>
+    <Modal title={t('Enter amount of tickets to buy')} onDismiss={onDismiss}>
       <TicketInput
         value={val}
         onSelectMax={handleSelectMax}
@@ -77,26 +79,24 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ max, onDismiss }) => {
         availableSymbol="CAKE"
       />
       <div>
-        <Tips>{TranslateString(999, `1 Ticket = ${LOTTERY_TICKET_PRICE} CAKE`, { num: LOTTERY_TICKET_PRICE })}</Tips>
+        <Tips>{t(`1 Ticket = ${LOTTERY_TICKET_PRICE} CAKE`, { num: LOTTERY_TICKET_PRICE })}</Tips>
       </div>
       <div>
         <Announce>
-          {TranslateString(
-            478,
-            'Ticket purchases are final. Your CAKE cannot be returned to you after buying tickets.',
-          )}
+          {t('Ticket purchases are final. Your CAKE cannot be returned to you after buying tickets.')}
         </Announce>
-        <Final>{TranslateString(460, `You will spend: ${cakeCosts(val)} CAKE`)}</Final>
+        <Final>{t('You will spend: %amount% CAKE', { amount: cakeCosts(val) })}</Final>
       </div>
       <ModalActions>
         <Button width="100%" variant="secondary" onClick={onDismiss}>
-          {TranslateString(462, 'Cancel')}
+          {t('Cancel')}
         </Button>
         <Button
           id="lottery-buy-complete"
           width="100%"
           disabled={
             pendingTx ||
+            !Number.isInteger(parseInt(val)) ||
             parseInt(val) > Number(maxTickets) ||
             parseInt(val) > LOTTERY_MAX_NUMBER_OF_TICKETS ||
             parseInt(val) < 1
@@ -108,7 +108,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ max, onDismiss }) => {
             onDismiss()
           }}
         >
-          {pendingTx ? TranslateString(488, 'Pending Confirmation') : TranslateString(464, 'Confirm')}
+          {pendingTx ? t('Pending Confirmation') : t('Confirm')}
         </Button>
       </ModalActions>
     </Modal>

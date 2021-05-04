@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Button, Flex, Input, InputProps } from '@pancakeswap-libs/uikit'
-import useI18n from 'hooks/useI18n'
+import { useTranslation } from 'contexts/Localization'
 
 interface TokenInputProps extends InputProps {
   max: number | string
@@ -13,28 +13,27 @@ interface TokenInputProps extends InputProps {
 }
 
 const TicketInput: React.FC<TokenInputProps> = ({ max, symbol, availableSymbol, onChange, onSelectMax, value }) => {
-  const TranslateString = useI18n()
+  const { t } = useTranslation()
 
   return (
-    <StyledTokenInput>
+    <>
       <Flex alignItems="center">
-        <Input onChange={onChange} placeholder="0" value={value} />
+        <Input type="number" inputMode="numeric" min="0" onChange={onChange} placeholder="0" value={value} />
         <StyledTokenAdornmentWrapper>
+          <StyledSpacer />
           <StyledTokenSymbol>{symbol}</StyledTokenSymbol>
           <StyledSpacer />
-          <div>
-            <Button size="sm" onClick={onSelectMax}>
-              {TranslateString(452, 'Max')}
-            </Button>
-          </div>
+          <Button size="sm" onClick={onSelectMax}>
+            {t('Max')}
+          </Button>
         </StyledTokenAdornmentWrapper>
       </Flex>
-      <StyledMaxText>{TranslateString(454, `${max.toLocaleString()} ${availableSymbol} Available`)}</StyledMaxText>
-    </StyledTokenInput>
+      <StyledMaxText>
+        {t('%num% %symbol% Available', { num: max.toLocaleString(), symbol: availableSymbol })}
+      </StyledMaxText>
+    </>
   )
 }
-
-const StyledTokenInput = styled.div``
 
 const StyledSpacer = styled.div`
   width: ${(props) => props.theme.spacing[3]}px;
