@@ -1,9 +1,9 @@
-import React, { useEffect, lazy } from 'react'
+import React, { lazy } from 'react'
 import { Router, Redirect, Route, Switch } from 'react-router-dom'
-import { ResetCSS } from '@pancakeswap-libs/uikit'
+import { ResetCSS } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
-import { useFetchPriceList, useFetchProfile, useFetchPublicData } from 'state/hooks'
+import { usePollCoreFarmData, useFetchProfile, usePollBlockNumber } from 'state/hooks'
 import GlobalStyle from './style/Global'
 import Menu from './components/Menu'
 import SuspenseWithChunkError from './components/SuspenseWithChunkError'
@@ -27,23 +27,17 @@ const Profile = lazy(() => import('./views/Profile'))
 const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
 const Predictions = lazy(() => import('./views/Predictions'))
 
-// This config is required for number formating
+// This config is required for number formatting
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
   DECIMAL_PLACES: 80,
 })
 
 const App: React.FC = () => {
-  // Monkey patch warn() because of web3 flood
-  // To be removed when web3 1.3.5 is released
-  useEffect(() => {
-    console.warn = () => null
-  }, [])
-
+  usePollBlockNumber()
   useEagerConnect()
-  useFetchPublicData()
   useFetchProfile()
-  useFetchPriceList()
+  usePollCoreFarmData()
 
   return (
     <Router history={history}>

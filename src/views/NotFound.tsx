@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Button, Heading, Text, LogoIcon } from '@pancakeswap-libs/uikit'
+import { Button, Heading, Text, LogoIcon } from '@pancakeswap/uikit'
 import Page from 'components/layout/Page'
 import { useTranslation } from 'contexts/Localization'
 
@@ -19,7 +19,7 @@ const NotFound = () => {
     <Page>
       <StyledNotFound>
         <LogoIcon width="64px" mb="8px" />
-        <Heading size="xxl">404</Heading>
+        <Heading scale="xxl">404</Heading>
         <Text mb="16px">{t('Oops, page not found.')}</Text>
         <Button as="a" href="/" scale="sm">
           {t('Back Home')}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Heading, Card, CardBody, Text } from '@pancakeswap-libs/uikit'
+import { Heading, Card, CardBody, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import Select, { OptionProps } from 'components/Select/Select'
@@ -40,7 +40,7 @@ const PastDrawsHistoryCard: React.FC = () => {
   return (
     <Card>
       <CardBody>
-        <Heading size="md">{t('History')}</Heading>
+        <Heading scale="md">{t('History')}</Heading>
         <Wrapper>
           <Legend />
           <LabelWrapper>
@@ -60,7 +60,7 @@ const PastDrawsHistoryCard: React.FC = () => {
                   value: 200,
                 },
                 {
-                  label: 'Max',
+                  label: t('Max'),
                   value: 'max',
                 },
               ]}

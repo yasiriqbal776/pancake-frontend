@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Text } from '@pancakeswap-libs/uikit'
+import { Heading, Text } from '@pancakeswap/uikit'
 import { useProfile } from 'state/hooks'
 import { useTranslation } from 'contexts/Localization'
 import HeaderWrapper from 'views/Profile/components/HeaderWrapper'
@@ -14,7 +14,7 @@ const TeamHeader = () => {
     <>
       {showProfileCallout && <NoProfileCard />}
       <HeaderWrapper>
-        <Heading as="h1" size="xxl" color="secondary">
+        <Heading as="h1" scale="xxl" color="secondary">
           {t('Teams & Profiles')}
         </Heading>
         <Text bold>

@@ -13,7 +13,7 @@ import {
   Text,
   CardFooter,
   useModal,
-} from '@pancakeswap-libs/uikit'
+} from '@pancakeswap/uikit'
 import { useProfile } from 'state/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { Nft } from 'config/constants/types'
@@ -107,7 +107,7 @@ const NftCard: React.FC<NftCardProps> = ({ nft, canClaim = false, tokenIds = [],
         {isOpen && (
           <InfoBlock>
             <Text as="p" color="textSubtle" style={{ textAlign: 'center' }}>
-              {description}
+              {t(description)}
             </Text>
           </InfoBlock>
         )}

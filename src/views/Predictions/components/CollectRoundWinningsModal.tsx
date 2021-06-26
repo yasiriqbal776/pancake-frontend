@@ -15,9 +15,12 @@ import {
   Box,
   LinkExternal,
   ModalCloseButton,
-} from '@pancakeswap-libs/uikit'
+} from '@pancakeswap/uikit'
 import { useWeb3React } from '@web3-react/core'
+import { getBscScanTransactionUrl } from 'utils/bscscan'
+import { useAppDispatch } from 'state'
 import { usePriceBnbBusd } from 'state/hooks'
+import { markBetAsCollected } from 'state/predictions'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { usePredictionsContract } from 'hooks/useContract'
@@ -25,6 +28,7 @@ import { formatBnb } from '../helpers'
 
 interface CollectRoundWinningsModalProps extends InjectedModalProps {
   payout: number
+  roundId: string
   epoch: number
   onSuccess?: () => Promise<void>
 }
@@ -43,6 +47,7 @@ const BunnyDecoration = styled.div`
 
 const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
   payout,
+  roundId,
   epoch,
   onDismiss,
   onSuccess,
@@ -53,6 +58,7 @@ const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
   const { toastSuccess, toastError } = useToast()
   const predictionsContract = usePredictionsContract()
   const bnbBusdPrice = usePriceBnbBusd()
+  const dispatch = useAppDispatch()
 
   const handleClick = () => {
     predictionsContract.methods
@@ -66,8 +72,9 @@ const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
           await onSuccess()
         }
 
-        setIsPendingTx(false)
+        dispatch(markBetAsCollected({ account, roundId }))
         onDismiss()
+        setIsPendingTx(false)
         toastSuccess(
           t('Winnings collected!'),
           <Box>
@@ -75,7 +82,7 @@ const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
               {t('Your prizes have been sent to your wallet')}
             </Text>
             {result.transactionHash && (
-              <LinkExternal href={`https://bscscan.com/tx/${result.transactionHash}`}>
+              <LinkExternal href={getBscScanTransactionUrl(result.transactionHash)}>
                 {t('View on BscScan')}
               </LinkExternal>
             )}
@@ -84,7 +91,7 @@ const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
       })
       .once('error', (error) => {
         setIsPendingTx(false)
-        toastError('Error', error?.message)
+        toastError(t('Error'), error?.message)
         console.error(error)
       })
   }
@@ -105,7 +112,7 @@ const CollectRoundWinningsModal: React.FC<CollectRoundWinningsModalProps> = ({
         <Flex alignItems="start" justifyContent="space-between" mb="24px">
           <Text>{t('Collecting')}</Text>
           <Box style={{ textAlign: 'right' }}>
-            <Text>{formatBnb(payout)}</Text>
+            <Text>{`${formatBnb(payout)} BNB`}</Text>
             <Text fontSize="12px" color="textSubtle">
               {`~$${formatBnb(bnbBusdPrice.times(payout).toNumber())}`}
             </Text>

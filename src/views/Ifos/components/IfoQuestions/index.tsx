@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, Heading, Card, CardHeader, CardBody, Flex } from '@pancakeswap-libs/uikit'
+import { Text, Heading, Card, CardHeader, CardBody, Flex } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import FoldableText from 'components/FoldableText'
 import config from './config'
@@ -8,7 +8,8 @@ import config from './config'
 const ImageWrapper = styled.div`
   flex: none;
   order: 2;
-  width: 224px;
+  max-width: 414px;
+  width: 100%;
 
   ${({ theme }) => theme.mediaQueries.md} {
     order: 1;
@@ -32,22 +33,22 @@ const IfoQuestions = () => {
   return (
     <Flex alignItems={['center', null, null, 'start']} flexDirection={['column', null, null, 'row']}>
       <ImageWrapper>
-        <img src="/images/ifo-bunny.png" alt="ifo bunny" width="224px" height="208px" />
+        <img src="/images/ifo-bunny.png" alt="ifo bunny" width="414px" height="500px" />
       </ImageWrapper>
       <DetailsWrapper>
         <Card>
           <CardHeader>
-            <Heading size="lg" color="secondary">
+            <Heading scale="lg" color="secondary">
               {t('Details')}
             </Heading>
           </CardHeader>
           <CardBody>
-            {config.map(({ title, description }) => (
-              <FoldableText key={title.fallback} id={title.fallback} mb="24px" title={t(title.fallback)}>
-                {description.map(({ fallback }) => {
+            {config.map(({ title, description }, i, { length }) => (
+              <FoldableText key={title} id={title} mb={i + 1 === length ? '' : '24px'} title={t(title)}>
+                {description.map((desc) => {
                   return (
-                    <Text key={fallback} color="textSubtle" as="p">
-                      {t(fallback)}
+                    <Text key={desc} color="textSubtle" as="p">
+                      {t(desc)}
                     </Text>
                   )
                 })}

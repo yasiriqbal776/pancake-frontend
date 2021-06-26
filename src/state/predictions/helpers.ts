@@ -1,8 +1,9 @@
 import { request, gql } from 'graphql-request'
-import { GRAPH_API_PREDICTIONS } from 'config/constants/endpoints'
+import { GRAPH_API_PREDICTION } from 'config/constants/endpoints'
 import { Bet, BetPosition, Market, PredictionStatus, Round, RoundData } from 'state/types'
-import makeBatchRequest from 'utils/makeBatchRequest'
-import { getPredictionsContract } from 'utils/contractHelpers'
+import { multicallv2 } from 'utils/multicall'
+import predictionsAbi from 'config/abi/predictions.json'
+import { getPredictionsAddress } from 'utils/addressHelpers'
 import {
   BetResponse,
   getRoundBaseFields,
@@ -10,7 +11,16 @@ import {
   getUserBaseFields,
   RoundResponse,
   MarketResponse,
+  TotalWonMarketResponse,
+  TotalWonRoundResponse,
 } from './queries'
+
+export enum Result {
+  WIN = 'win',
+  LOSE = 'lose',
+  CANCELED = 'canceled',
+  LIVE = 'live',
+}
 
 export const numberOrNull = (value: string) => {
   if (value === null) {
@@ -51,6 +61,7 @@ export const transformBetResponse = (betResponse: BetResponse): Bet => {
     amount: betResponse.amount ? parseFloat(betResponse.amount) : 0,
     position: betResponse.position === 'Bull' ? BetPosition.BULL : BetPosition.BEAR,
     claimed: betResponse.claimed,
+    claimedHash: betResponse.claimedHash,
     user: {
       id: betResponse.user.id,
       address: betResponse.user.address,
@@ -131,6 +142,20 @@ export const transformMarketResponse = (marketResponse: MarketResponse): Market 
   }
 }
 
+export const transformTotalWonResponse = (
+  marketResponse: TotalWonMarketResponse,
+  roundResponse: TotalWonRoundResponse[],
+): number => {
+  const houseRounds = roundResponse.reduce((accum, round) => {
+    return accum + (round.totalAmount ? parseFloat(round.totalAmount) : 0)
+  }, 0)
+
+  const totalBNB = marketResponse.totalBNB ? parseFloat(marketResponse.totalBNB) : 0
+  const totalBNBTreasury = marketResponse.totalBNBTreasury ? parseFloat(marketResponse.totalBNBTreasury) : 0
+
+  return Math.max(totalBNB - (totalBNBTreasury + houseRounds), 0)
+}
+
 export const makeRoundData = (rounds: Round[]): RoundData => {
   return rounds.reduce((accum, round) => {
     return {
@@ -140,25 +165,54 @@ export const makeRoundData = (rounds: Round[]): RoundData => {
   }, {})
 }
 
+export const getRoundResult = (bet: Bet, currentEpoch: number): Result => {
+  const { round } = bet
+  if (round.failed) {
+    return Result.CANCELED
+  }
+
+  if (round.epoch >= currentEpoch - 1) {
+    return Result.LIVE
+  }
+  const roundResultPosition = round.closePrice > round.lockPrice ? BetPosition.BULL : BetPosition.BEAR
+
+  return bet.position === roundResultPosition ? Result.WIN : Result.LOSE
+}
+
+/**
+ * Given a bet object, check if it is eligible to be claimed or refunded
+ */
+export const getCanClaim = (bet: Bet) => {
+  return !bet.claimed && (bet.position === bet.round.position || bet.round.failed === true)
+}
+
+/**
+ * Returns only bets where the user has won.
+ * This is necessary because the API currently cannot distinguish between an uncliamed bet that has won or lost
+ */
+export const getUnclaimedWinningBets = (bets: Bet[]): Bet[] => {
+  return bets.filter(getCanClaim)
+}
+
 /**
  * Gets static data from the contract
  */
 export const getStaticPredictionsData = async () => {
-  const { methods } = getPredictionsContract()
-  const [currentEpoch, intervalBlocks, minBetAmount, isPaused, bufferBlocks] = await makeBatchRequest([
-    methods.currentEpoch().call,
-    methods.intervalBlocks().call,
-    methods.minBetAmount().call,
-    methods.paused().call,
-    methods.bufferBlocks().call,
-  ])
+  const calls = ['currentEpoch', 'intervalBlocks', 'minBetAmount', 'paused', 'bufferBlocks'].map((method) => ({
+    address: getPredictionsAddress(),
+    name: method,
+  }))
+  const [[currentEpoch], [intervalBlocks], [minBetAmount], [isPaused], [bufferBlocks]] = await multicallv2(
+    predictionsAbi,
+    calls,
+  )
 
   return {
     status: isPaused ? PredictionStatus.PAUSED : PredictionStatus.LIVE,
-    currentEpoch: Number(currentEpoch),
-    intervalBlocks: Number(intervalBlocks),
-    bufferBlocks: Number(bufferBlocks),
-    minBetAmount,
+    currentEpoch: currentEpoch.toNumber(),
+    intervalBlocks: intervalBlocks.toNumber(),
+    bufferBlocks: bufferBlocks.toNumber(),
+    minBetAmount: minBetAmount.toNumber(),
   }
 }
 
@@ -167,7 +221,7 @@ export const getMarketData = async (): Promise<{
   market: Market
 }> => {
   const response = (await request(
-    GRAPH_API_PREDICTIONS,
+    GRAPH_API_PREDICTION,
     gql`
       query getMarketData {
         rounds(first: 5, orderBy: epoch, orderDirection: desc) {
@@ -190,9 +244,29 @@ export const getMarketData = async (): Promise<{
   }
 }
 
+export const getTotalWon = async (): Promise<number> => {
+  const response = (await request(
+    GRAPH_API_PREDICTION,
+    gql`
+      query getTotalWonData($position: String) {
+        market(id: 1) {
+          totalBNB
+          totalBNBTreasury
+        }
+        rounds(where: { position: $position }) {
+          totalAmount
+        }
+      }
+    `,
+    { position: BetPosition.HOUSE },
+  )) as { market: TotalWonMarketResponse; rounds: TotalWonRoundResponse[] }
+
+  return transformTotalWonResponse(response.market, response.rounds)
+}
+
 export const getRound = async (id: string) => {
   const response = await request(
-    GRAPH_API_PREDICTIONS,
+    GRAPH_API_PREDICTION,
     gql`
       query getRound($id: ID!) {
         round(id: $id) {
@@ -211,7 +285,7 @@ export const getRound = async (id: string) => {
   return response.round
 }
 
-type BetHistoryWhereClause = Record<string, string | number | boolean>
+type BetHistoryWhereClause = Record<string, string | number | boolean | string[]>
 
 export const getBetHistory = async (
   where: BetHistoryWhereClause = {},
@@ -219,7 +293,7 @@ export const getBetHistory = async (
   skip = 0,
 ): Promise<BetResponse[]> => {
   const response = await request(
-    GRAPH_API_PREDICTIONS,
+    GRAPH_API_PREDICTION,
     gql`
       query getBetHistory($first: Int!, $skip: Int!, $where: Bet_filter) {
         bets(first: $first, skip: $skip, where: $where) {
@@ -240,7 +314,7 @@ export const getBetHistory = async (
 
 export const getBet = async (betId: string): Promise<BetResponse> => {
   const response = await request(
-    GRAPH_API_PREDICTIONS,
+    GRAPH_API_PREDICTION,
     gql`
       query getBet($id: ID!) {
         bet(id: $id) {

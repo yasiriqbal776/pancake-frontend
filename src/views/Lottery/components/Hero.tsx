@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Heading, Text, LinkExternal } from '@pancakeswap-libs/uikit'
+import { Heading, Text, LinkExternal } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Container from 'components/layout/Container'
 
-const Title = styled(Heading).attrs({ as: 'h1', size: 'xl' })`
+const Title = styled(Heading).attrs({ as: 'h1', scale: 'xl' })`
   color: #ffffff;
   margin-bottom: 24px;
   text-shadow: 2px 2px 2px #00000040;
@@ -89,7 +89,7 @@ const Hero = () => {
             bold
             mt={20}
             external
-            href="https://voting.pancakeswap.finance/#/pancake/proposal/QmU8pcbmBrfbfVQXMMxmkExDq3mYq4s5cbBuFe6uCZzdmX"
+            href="https://pancakeswap.medium.com/pancakeswap-april-may-recap-a4e7cf990f72"
           >
             {t('Learn more')}
           </LinkExternal>

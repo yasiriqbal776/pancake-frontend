@@ -1,24 +1,19 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Flex, Heading, Text, PrizeIcon, BlockIcon } from '@pancakeswap-libs/uikit'
+import { Box, Flex, Heading, Text, PrizeIcon, BlockIcon, LinkExternal } from '@pancakeswap/uikit'
 import { useAppDispatch } from 'state'
 import { useTranslation } from 'contexts/Localization'
-import { usePriceBnbBusd } from 'state/hooks'
+import { useBetCanClaim, usePriceBnbBusd } from 'state/hooks'
 import styled from 'styled-components'
 import { Bet, BetPosition } from 'state/types'
 import { fetchBet } from 'state/predictions'
+import { Result } from 'state/predictions/helpers'
+import { getBscScanTransactionUrl } from 'utils/bscscan'
 import useIsRefundable from '../../hooks/useIsRefundable'
 import { formatBnb, getPayout } from '../../helpers'
 import CollectWinningsButton from '../CollectWinningsButton'
 import PositionTag from '../PositionTag'
 import ReclaimPositionButton from '../ReclaimPositionButton'
-
-export enum Result {
-  WIN = 'win',
-  LOSE = 'lose',
-  CANCELED = 'canceled',
-  LIVE = 'live',
-}
 
 interface BetResultProps {
   bet: Bet
@@ -38,6 +33,7 @@ const BetResult: React.FC<BetResultProps> = ({ bet, result }) => {
   const { account } = useWeb3React()
   const { isRefundable } = useIsRefundable(bet.round.epoch)
   const bnbBusdPrice = usePriceBnbBusd()
+  const canClaim = useBetCanClaim(account, bet.round.id)
 
   // Winners get the payout, otherwise the claim what they put it if it was canceled
   const payout = result === Result.WIN ? getPayout(bet) : bet.amount
@@ -108,17 +104,25 @@ const BetResult: React.FC<BetResultProps> = ({ bet, result }) => {
         </Flex>
       </Flex>
       <StyledBetResult>
-        {result === Result.WIN && !bet.claimed && (
+        {result === Result.WIN && !canClaim && (
           <CollectWinningsButton
             payout={payout}
+            roundId={bet.round.id}
             epoch={bet.round.epoch}
-            hasClaimed={bet.claimed}
+            hasClaimed={!canClaim}
             width="100%"
             mb="16px"
             onSuccess={handleSuccess}
           >
-            {t('Collect Winnings')}
+            {bet.claimed ? t('Already Collected') : t('Collect Winnings')}
           </CollectWinningsButton>
+        )}
+        {bet.claimed && (
+          <Flex justifyContent="center">
+            <LinkExternal href={getBscScanTransactionUrl(bet.claimedHash)} mb="16px">
+              {t('View on BscScan')}
+            </LinkExternal>
+          </Flex>
         )}
         {result === Result.CANCELED && isRefundable && (
           <ReclaimPositionButton epoch={bet.round.epoch} width="100%" mb="16px" />

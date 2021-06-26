@@ -10,7 +10,7 @@ import {
   Box,
   Flex,
   ExpandableLabel,
-} from '@pancakeswap-libs/uikit'
+} from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { TeamRanksProps } from '../../../types'
 import TopTradersGrid from './TopTradersGrid'
@@ -27,7 +27,7 @@ const TopTradersCard: React.FC<TeamRanksProps> = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [topTradersGridData, setTopTradersGridData] = useState(null)
   const handleItemClick = (index: number) => setActiveTab(index)
-  const tabs = [`${t('Total')}`, 'Storm', 'Flippers', 'Cakers']
+  const tabs = [t('Total'), 'Storm', 'Flippers', 'Cakers']
 
   useEffect(() => {
     const getData = () => {
@@ -64,11 +64,11 @@ const TopTradersCard: React.FC<TeamRanksProps> = ({
     <Card>
       <Box width="100%">
         <CardHeader>
-          <Heading color="secondary" size="lg">
+          <Heading color="secondary" scale="lg">
             {t('Top Traders')}
           </Heading>
           <Text fontSize="14px" color="textSubtle">
-            {t('Since start of competition')}
+            {t('Since start of the competition')}
           </Text>
         </CardHeader>
         <Box mt="16px">

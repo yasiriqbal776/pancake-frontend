@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, CardBody, Flex, Heading, Text } from '@pancakeswap-libs/uikit'
+import { Button, Card, CardBody, Flex, Heading, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Link } from 'react-router-dom'
 
@@ -15,8 +15,8 @@ const NoProfileCard = () => {
           flexDirection={['column', null, 'row']}
         >
           <div>
-            <Heading size="lg" mb="8px">
-              {t("You haven't set up your profile yet!")}
+            <Heading scale="lg" mb="8px">
+              {t('You haven’t set up your profile yet!')}
             </Heading>
             <Text>{t('You can do this at any time by clicking on your profile picture in the menu')}</Text>
           </div>

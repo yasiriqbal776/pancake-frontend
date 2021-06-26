@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled, { css, keyframes } from 'styled-components'
-import { Button, CloseIcon, IconButton, TrophyGoldIcon } from '@pancakeswap-libs/uikit'
+import { Button, CloseIcon, IconButton, TrophyGoldIcon } from '@pancakeswap/uikit'
 import { CSSTransition } from 'react-transition-group'
 import { useTranslation } from 'contexts/Localization'
 import { getBetHistory } from 'state/predictions/helpers'
@@ -139,23 +139,27 @@ const CollectWinningsPopup = () => {
 
   // Check user's history for unclaimed winners
   useEffect(() => {
+    let isCancelled = false
     if (account) {
       timer.current = setInterval(async () => {
         const bets = await getBetHistory({ user: account.toLowerCase(), claimed: false })
 
-        // Filter out bets that were not winners
-        const winnerBets = bets.filter((bet) => {
-          return bet.position === bet.round.position
-        })
+        if (!isCancelled) {
+          // Filter out bets that were not winners
+          const winnerBets = bets.filter((bet) => {
+            return bet.position === bet.round.position
+          })
 
-        if (!isHistoryPaneOpen) {
-          setIsOpen(winnerBets.length > 0)
+          if (!isHistoryPaneOpen) {
+            setIsOpen(winnerBets.length > 0)
+          }
         }
       }, 30000)
     }
 
     return () => {
       clearInterval(timer.current)
+      isCancelled = true
     }
   }, [account, timer, predictionStatus, setIsOpen, isHistoryPaneOpen])
 

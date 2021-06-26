@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
-import { AutoRenewIcon, Button, Flex } from '@pancakeswap-libs/uikit'
+import { AutoRenewIcon, Button, Flex } from '@pancakeswap/uikit'
 import { Achievement } from 'state/types'
 import useToast from 'hooks/useToast'
 import { useTranslation } from 'contexts/Localization'
@@ -18,7 +18,7 @@ interface AchievementRowProps {
 }
 
 const StyledAchievementRow = styled(Flex)`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.borderColor};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   padding-bottom: 16px;
   padding-top: 16px;
 `
@@ -55,10 +55,10 @@ const AchievementRow: React.FC<AchievementRowProps> = ({ achievement, onCollectS
       .on('receipt', () => {
         setIsCollecting(false)
         onCollectSuccess(achievement)
-        toastSuccess('Points Collected!')
+        toastSuccess(t('Points Collected!'))
       })
       .on('error', (error) => {
-        toastError('Error', error?.message)
+        toastError(t('Error'), error?.message)
         setIsCollecting(false)
       })
   }

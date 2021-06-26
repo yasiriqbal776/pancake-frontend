@@ -12,7 +12,7 @@ import {
   BlockIcon,
   Button,
   useModal,
-} from '@pancakeswap-libs/uikit'
+} from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { LIVE } from 'config/constants/trading-competition/easterPhases'
@@ -156,7 +156,7 @@ const CardUserInfo: React.FC<YourScoreProps> = ({
 
   return (
     <Flex flexDirection="column" alignItems="center" mt="16px">
-      <Heading size="lg" textAlign="center">
+      <Heading scale="lg" textAlign="center">
         {headingText}
       </Heading>
       <Text textAlign="center" fontSize="14px" color="textSubtle" mt="4px">
@@ -175,7 +175,7 @@ const CardUserInfo: React.FC<YourScoreProps> = ({
                 <UserRankBox
                   flex="1"
                   title={t('Rank in team').toUpperCase()}
-                  footer={`${t(`#${userLeaderboardInformation && global.toLocaleString()} Overall`)}`}
+                  footer={userLeaderboardInformation ? t('#%global% Overall', { global: global.toLocaleString() }) : ''}
                   mr={[0, '8px']}
                   mb={['8px', 0]}
                 >
@@ -183,7 +183,7 @@ const CardUserInfo: React.FC<YourScoreProps> = ({
                     <Skeleton height="26px" width="110px" />
                   ) : (
                     <TeamRankTextWrapper>
-                      <Heading textAlign="center" size="lg" mr="8px">
+                      <Heading textAlign="center" scale="lg" mr="8px">
                         #{team}
                       </Heading>
                       {medal.current}
@@ -201,7 +201,7 @@ const CardUserInfo: React.FC<YourScoreProps> = ({
                 {!userLeaderboardInformation ? (
                   <Skeleton height="26px" width="110px" />
                 ) : (
-                  <Heading textAlign="center" size="lg">
+                  <Heading textAlign="center" scale="lg">
                     ${userLeaderboardInformation && localiseTradingVolume(volume)}
                   </Heading>
                 )}
@@ -213,22 +213,22 @@ const CardUserInfo: React.FC<YourScoreProps> = ({
                 // If user is first
                 <NextRankBox
                   flex="2"
-                  title={`${t('Your tier: gold').toUpperCase()}`}
-                  footer={`${t('Love, The Chefs x')}`}
+                  title={t('Your tier: gold').toUpperCase()}
+                  footer={t('Love, The Chefs x')}
                   currentMedal={medal.current}
                   hideArrow
                 >
-                  <Heading size="lg">{t('HECK YES!')}</Heading>
+                  <Heading scale="lg">{t('HECK YEAH!')}</Heading>
                 </NextRankBox>
               ) : (
                 <NextRankBox
                   flex="2"
                   title={`${t('Next tier').toUpperCase()}: ${nextTier.color}`}
-                  footer={`${t('to become')} #${nextTier.rank} ${t('in team')}`}
+                  footer={t('to become #%rank% in team', { rank: nextTier.rank })}
                   currentMedal={medal.current}
                   nextMedal={medal.next}
                 >
-                  <Heading size="lg">+${userLeaderboardInformation && localiseTradingVolume(nextRank)}</Heading>
+                  <Heading scale="lg">+${userLeaderboardInformation && localiseTradingVolume(nextRank)}</Heading>
                 </NextRankBox>
               ))}
           </RanksWrapper>

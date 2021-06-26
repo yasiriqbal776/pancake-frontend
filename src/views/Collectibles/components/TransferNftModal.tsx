@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Web3 from 'web3'
 import { useWeb3React } from '@web3-react/core'
-import { Button, Input, Modal, Text } from '@pancakeswap-libs/uikit'
+import { Button, Input, Modal, Text } from '@pancakeswap/uikit'
 import { getAddressByType } from 'utils/collectibles'
 import { Nft } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
@@ -63,11 +63,11 @@ const TransferNftModal: React.FC<TransferNftModalProps> = ({ nft, tokenIds, onSu
           .on('receipt', () => {
             onDismiss()
             onSuccess()
-            toastSuccess('NFT successfully transferred!')
+            toastSuccess(t('NFT successfully transferred!'))
           })
           .on('error', () => {
             console.error(error)
-            setError('Unable to transfer NFT')
+            setError(t('Unable to transfer NFT'))
             setIsLoading(false)
           })
       }
@@ -91,7 +91,7 @@ const TransferNftModal: React.FC<TransferNftModalProps> = ({ nft, tokenIds, onSu
         )}
         <InfoRow>
           <Text>{t('Transferring')}:</Text>
-          <Value>{`1x "${nft.name}" NFT`}</Value>
+          <Value>{t('1x %nftName% NFT', { nftName: nft.name })}</Value>
         </InfoRow>
         <Label htmlFor="transferAddress">{t('Receiving address')}:</Label>
         <Input

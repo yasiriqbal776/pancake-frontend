@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Heading, CardBody, CardFooter, PancakeRoundIcon, TicketRound } from '@pancakeswap-libs/uikit'
+import { Heading, CardBody, CardFooter, PancakeRoundIcon, TicketRound } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { DataResponse } from 'utils/getLotteryRoundData'
 import LotteryCardHeading from '../LotteryCardHeading'
@@ -44,8 +44,8 @@ const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => 
         <CardBody>
           <CardHeading>
             <Timestamp timeValue={lotteryDate} />
-            <Heading size="md" mb="24px">
-              Round #{lotteryNumber}
+            <Heading scale="md" mb="24px">
+              {t('Round #%num%', { num: lotteryNumber })}
             </Heading>
             <TopLotteryCardHeading
               valueToDisplay={`${lotteryNumbers[0]}, ${lotteryNumbers[1]}, ${lotteryNumbers[2]}, ${lotteryNumbers[3]}`}
@@ -53,7 +53,7 @@ const PastRoundCardDetails: React.FC<PastRoundCardDetailsProps> = ({ data }) => 
             >
               {t('Winning numbers')}
             </TopLotteryCardHeading>
-            <LotteryCardHeading valueToDisplay={t(`${poolSize.toLocaleString()} CAKE`)} Icon={PancakeRoundIcon}>
+            <LotteryCardHeading valueToDisplay={`${poolSize.toLocaleString()} CAKE`} Icon={PancakeRoundIcon}>
               {t('Total prizes')}
             </LotteryCardHeading>
           </CardHeading>

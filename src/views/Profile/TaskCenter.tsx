@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardBody, CardHeader, Flex, Heading, Text } from '@pancakeswap-libs/uikit'
+import { Card, CardBody, CardHeader, Flex, Heading, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import AchievementsList from './components/AchievementsList'
 import ClaimPointsCallout from './components/ClaimPointsCallout '
@@ -17,7 +17,7 @@ const TaskCenter = () => {
         <CardHeader>
           <Flex alignItems="center" justifyContent="space-between">
             <div>
-              <Heading size="lg" mb="8px">
+              <Heading scale="lg" mb="8px">
                 {t('Achievements')}
               </Heading>
               <Text as="p">{t('Earn more points for completing larger quests!')}</Text>
@@ -32,7 +32,7 @@ const TaskCenter = () => {
         <CardHeader>
           <Flex alignItems="center" justifyContent="space-between">
             <div>
-              <Heading size="lg" mb="8px">
+              <Heading scale="lg" mb="8px">
                 {t('Task Center')}
               </Heading>
               <Text as="p">{t('Earn points by completing regular tasks!')}</Text>

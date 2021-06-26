@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Card, CardHeader, Box, Heading, Text } from '@pancakeswap-libs/uikit'
+import { Card, CardHeader, Box, Heading, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import PrizesGrid from './PrizesGrid'
 
@@ -17,7 +17,7 @@ const PrizesCard = () => {
   return (
     <StyledCard>
       <CardHeader>
-        <Heading size="lg" color="secondary">
+        <Heading scale="lg" color="secondary">
           {t('Prizes by Team')}
         </Heading>
         <Text color="textSubtle" fontSize="14px">

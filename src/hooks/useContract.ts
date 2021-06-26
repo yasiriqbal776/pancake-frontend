@@ -20,6 +20,9 @@ import {
   getErc721Contract,
   getCakeVaultContract,
   getPredictionsContract,
+  getChainlinkOracleContract,
+  getSouschefV2Contract,
+  getLotteryV2Contract,
 } from 'utils/contractHelpers'
 
 /**
@@ -79,6 +82,11 @@ export const useLotteryTicket = () => {
   return useMemo(() => getLotteryTicketContract(web3), [web3])
 }
 
+export const useLotteryV2Contract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getLotteryV2Contract(web3), [web3])
+}
+
 export const useMasterchef = () => {
   const web3 = useWeb3()
   return useMemo(() => getMasterchefContract(web3), [web3])
@@ -87,6 +95,11 @@ export const useMasterchef = () => {
 export const useSousChef = (id) => {
   const web3 = useWeb3()
   return useMemo(() => getSouschefContract(id, web3), [id, web3])
+}
+
+export const useSousChefV2 = (id) => {
+  const web3 = useWeb3()
+  return useMemo(() => getSouschefV2Contract(id, web3), [id, web3])
 }
 
 export const usePointCenterIfoContract = () => {
@@ -122,4 +135,9 @@ export const useCakeVaultContract = () => {
 export const usePredictionsContract = () => {
   const web3 = useWeb3()
   return useMemo(() => getPredictionsContract(web3), [web3])
+}
+
+export const useChainlinkOracleContract = () => {
+  const web3 = useWeb3()
+  return useMemo(() => getChainlinkOracleContract(web3), [web3])
 }

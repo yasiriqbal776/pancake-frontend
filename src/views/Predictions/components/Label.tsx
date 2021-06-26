@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useCountUp } from 'react-countup'
 import styled from 'styled-components'
-import { BnbUsdtPairTokenIcon, Box, Card, PocketWatchIcon, Text } from '@pancakeswap-libs/uikit'
-import { useBnbUsdtTicker } from 'hooks/ticker'
+import { BnbUsdtPairTokenIcon, Box, Card, PocketWatchIcon, Text } from '@pancakeswap/uikit'
+import { useGetLastOraclePrice } from 'state/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { formatRoundTime } from '../helpers'
 import useRoundCountdown from '../hooks/useRoundCountdown'
@@ -71,8 +72,17 @@ const Label = styled(Card)<{ dir: 'left' | 'right' }>`
 `
 
 export const PricePairLabel: React.FC = () => {
-  const { stream } = useBnbUsdtTicker()
-  const { lastPrice } = stream ?? {}
+  const price = useGetLastOraclePrice()
+  const { countUp, update } = useCountUp({
+    start: 0,
+    end: price.toNumber(),
+    duration: 1,
+    decimals: 3,
+  })
+
+  useEffect(() => {
+    update(price.toNumber())
+  }, [price, update])
 
   return (
     <Box pl="24px" position="relative" display="inline-block">
@@ -83,10 +93,7 @@ export const PricePairLabel: React.FC = () => {
         <Title bold textTransform="uppercase">
           BNBUSDT
         </Title>
-        <Price fontSize="12px">
-          {lastPrice &&
-            `$${lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-        </Price>
+        <Price fontSize="12px">{`$${countUp}`}</Price>
       </Label>
     </Box>
   )
@@ -94,9 +101,10 @@ export const PricePairLabel: React.FC = () => {
 
 interface TimerLabelProps {
   interval: string
+  unit: 'm' | 'h' | 'd'
 }
 
-export const TimerLabel: React.FC<TimerLabelProps> = ({ interval }) => {
+export const TimerLabel: React.FC<TimerLabelProps> = ({ interval, unit }) => {
   const seconds = useRoundCountdown()
   const countdown = formatRoundTime(seconds)
   const { t } = useTranslation()
@@ -107,7 +115,7 @@ export const TimerLabel: React.FC<TimerLabelProps> = ({ interval }) => {
         <Title bold color="secondary">
           {seconds === 0 ? t('Closing') : countdown}
         </Title>
-        <Interval fontSize="12px">{interval}</Interval>
+        <Interval fontSize="12px">{`${interval}${t(unit)}`}</Interval>
       </Label>
       <Token right={0}>
         <PocketWatchIcon />

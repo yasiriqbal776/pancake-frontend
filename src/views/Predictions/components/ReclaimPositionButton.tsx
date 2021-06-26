@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import { AutoRenewIcon, Button, ButtonProps } from '@pancakeswap-libs/uikit'
+import { AutoRenewIcon, Button, ButtonProps } from '@pancakeswap/uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'contexts/Localization'
 import { usePredictionsContract } from 'hooks/useContract'
@@ -34,7 +34,7 @@ const ReclaimPositionButton: React.FC<ReclaimPositionButtonProps> = ({ epoch, on
       })
       .once('error', (error) => {
         setIsPendingTx(false)
-        toastError('Error', error?.message)
+        toastError(t('Error'), error?.message)
         console.error(error)
       })
   }

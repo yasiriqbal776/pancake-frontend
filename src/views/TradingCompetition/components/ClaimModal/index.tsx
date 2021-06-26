@@ -12,7 +12,7 @@ import {
   CrownIcon,
   TrophyGoldIcon,
   TeamPlayerIcon,
-} from '@pancakeswap-libs/uikit'
+} from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useTradingCompetitionContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
@@ -48,12 +48,12 @@ const ClaimModal: React.FC<CompetitionProps> = ({ onDismiss, onClaimSuccess, use
         setIsConfirming(true)
       })
       .on('receipt', async () => {
-        toastSuccess('You have claimed your rewards!')
+        toastSuccess(t('You have claimed your rewards!'))
         onDismiss()
         onClaimSuccess()
       })
       .on('error', (error) => {
-        toastError('Error', error?.message)
+        toastError(t('Error'), error?.message)
         setIsConfirming(false)
       })
   }
@@ -74,7 +74,7 @@ const ClaimModal: React.FC<CompetitionProps> = ({ onDismiss, onClaimSuccess, use
           </Text>
         </Flex>
         {/* cake */}
-        <Heading mt="16px" size="md" mb={canClaimNFT ? '16px' : '0px'}>
+        <Heading mt="16px" scale="md" mb={canClaimNFT ? '16px' : '0px'}>
           {cakeReward.toFixed(2)} CAKE
         </Heading>
         {/* NFT */}

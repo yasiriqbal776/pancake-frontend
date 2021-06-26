@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Card, CardHeader, CardBody, CommunityIcon, Heading, PrizeIcon, Text } from '@pancakeswap-libs/uikit'
+import { Card, CardHeader, CardBody, CommunityIcon, Heading, PrizeIcon, Text } from '@pancakeswap/uikit'
 import { Team } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import ComingSoon from 'views/Profile/components/ComingSoon'
@@ -85,7 +85,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
           </AvatarWrap>
           <TeamName color={team.textColor}>{team.name}</TeamName>
           <Text as="p" color={team.textColor}>
-            {team.description}
+            {t(team.description)}
           </Text>
         </StyledCardHeader>
         <CardBody>

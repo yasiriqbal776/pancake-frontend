@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Text, Flex, ChevronRightIcon } from '@pancakeswap-libs/uikit'
+import { Heading, Text, Flex, ChevronRightIcon } from '@pancakeswap/uikit'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import { useGetCollectibles } from 'state/hooks'
@@ -33,14 +33,14 @@ const Collectibles = () => {
 
   return (
     <>
-      <Heading as="h4" size="md" mb="8px">
+      <Heading as="h4" scale="md" mb="8px">
         {t('Pancake Collectibles')}
       </Heading>
       <Text as="p">
         {t('Pancake Collectibles are special ERC-721 NFTs that can be used on the PancakeSwap platform.')}
       </Text>
       <Text as="p">
-        {t("NFTs in this user's wallet that aren't approved Pancake Collectibles won't be shown here.")}
+        {t('NFTs in this user’s wallet that aren’t approved Pancake Collectibles won’t be shown here.')}
       </Text>
       {nftsInWallet.length > 0 && (
         <CollectibleList>

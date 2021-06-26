@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Text } from '@pancakeswap-libs/uikit'
+import { Heading, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import SecondaryCard from './SecondaryCard'
 import CardContent from './CardContent'
@@ -11,7 +11,7 @@ const PleaseWaitCard = () => {
     <SecondaryCard>
       <CardContent imgSrc="/images/present-alt.svg">
         <Heading mb="8px">{t('Please wait...')}</Heading>
-        <Text>{t("The claiming period hasn't started yet. Check back soon.")}</Text>
+        <Text>{t('The claiming period hasn’t started yet. Check back soon.')}</Text>
       </CardContent>
     </SecondaryCard>
   )

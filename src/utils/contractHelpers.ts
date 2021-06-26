@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 import web3NoAccount from 'utils/web3'
+import { ChainId } from '@pancakeswap-libs/sdk'
 import { poolsConfig } from 'config/constants'
 import { PoolCategory } from 'config/constants/types'
 
@@ -14,6 +15,7 @@ import {
   getCakeAddress,
   getLotteryAddress,
   getLotteryTicketAddress,
+  getLotteryV2Address,
   getMasterChefAddress,
   getPointCenterIfoAddress,
   getClaimRefundAddress,
@@ -21,6 +23,8 @@ import {
   getEasterNftAddress,
   getCakeVaultAddress,
   getPredictionsAddress,
+  getChainlinkOracleAddress,
+  getMulticallAddress,
 } from 'utils/addressHelpers'
 
 // ABI
@@ -37,18 +41,36 @@ import ifoV2Abi from 'config/abi/ifoV2.json'
 import pointCenterIfo from 'config/abi/pointCenterIfo.json'
 import lotteryAbi from 'config/abi/lottery.json'
 import lotteryTicketAbi from 'config/abi/lotteryNft.json'
+import lotteryV2Abi from 'config/abi/lotteryV2.json'
 import masterChef from 'config/abi/masterchef.json'
 import sousChef from 'config/abi/sousChef.json'
+import sousChefV2 from 'config/abi/sousChefV2.json'
 import sousChefBnb from 'config/abi/sousChefBnb.json'
 import claimRefundAbi from 'config/abi/claimRefund.json'
 import tradingCompetitionAbi from 'config/abi/tradingCompetition.json'
 import easterNftAbi from 'config/abi/easterNft.json'
 import cakeVaultAbi from 'config/abi/cakeVault.json'
 import predictionsAbi from 'config/abi/predictions.json'
+import chainlinkOracleAbi from 'config/abi/chainlinkOracle.json'
+import MultiCallAbi from 'config/abi/Multicall.json'
+import { DEFAULT_GAS_PRICE } from 'config'
+import { getSettings, getGasPriceInWei } from './settings'
 
-const getContract = (abi: any, address: string, web3?: Web3) => {
+export const getDefaultGasPrice = () => {
+  const chainId = parseInt(process.env.REACT_APP_CHAIN_ID, 10)
+  if (chainId === ChainId.BSCTESTNET) {
+    return 10
+  }
+  return DEFAULT_GAS_PRICE
+}
+
+const getContract = (abi: any, address: string, web3?: Web3, account?: string) => {
   const _web3 = web3 ?? web3NoAccount
-  return new _web3.eth.Contract((abi as unknown) as AbiItem, address)
+  const gasPrice = account ? getSettings(account).gasPrice : getDefaultGasPrice()
+
+  return new _web3.eth.Contract(abi as unknown as AbiItem, address, {
+    gasPrice: getGasPriceInWei(gasPrice).toString(),
+  })
 }
 
 export const getBep20Contract = (address: string, web3?: Web3) => {
@@ -70,6 +92,10 @@ export const getSouschefContract = (id: number, web3?: Web3) => {
   const config = poolsConfig.find((pool) => pool.sousId === id)
   const abi = config.poolCategory === PoolCategory.BINANCE ? sousChefBnb : sousChef
   return getContract(abi, getAddress(config.contractAddress), web3)
+}
+export const getSouschefV2Contract = (id: number, web3?: Web3) => {
+  const config = poolsConfig.find((pool) => pool.sousId === id)
+  return getContract(sousChefV2, getAddress(config.contractAddress), web3)
 }
 export const getPointCenterIfoContract = (web3?: Web3) => {
   return getContract(pointCenterIfo, getPointCenterIfoAddress(), web3)
@@ -95,6 +121,9 @@ export const getLotteryContract = (web3?: Web3) => {
 export const getLotteryTicketContract = (web3?: Web3) => {
   return getContract(lotteryTicketAbi, getLotteryTicketAddress(), web3)
 }
+export const getLotteryV2Contract = (web3?: Web3) => {
+  return getContract(lotteryV2Abi, getLotteryV2Address(), web3)
+}
 export const getMasterchefContract = (web3?: Web3) => {
   return getContract(masterChef, getMasterChefAddress(), web3)
 }
@@ -112,4 +141,10 @@ export const getCakeVaultContract = (web3?: Web3) => {
 }
 export const getPredictionsContract = (web3?: Web3) => {
   return getContract(predictionsAbi, getPredictionsAddress(), web3)
+}
+export const getChainlinkOracleContract = (web3?: Web3) => {
+  return getContract(chainlinkOracleAbi, getChainlinkOracleAddress(), web3)
+}
+export const getMulticallContract = (web3?: Web3) => {
+  return getContract(MultiCallAbi, getMulticallAddress(), web3)
 }

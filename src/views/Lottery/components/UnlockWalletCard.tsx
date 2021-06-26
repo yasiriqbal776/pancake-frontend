@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Heading, Card, CardBody, Ticket } from '@pancakeswap-libs/uikit'
+import { Heading, Card, CardBody, Ticket } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import UnlockButton from 'components/UnlockButton'
 
@@ -33,7 +33,7 @@ const UnlockWalletCard = () => {
           <Ticket />
         </IconWrapper>
         <div>
-          <StyledHeading size="md">{t('Unlock wallet to access lottery')}</StyledHeading>
+          <StyledHeading scale="md">{t('Unlock wallet to access lottery')}</StyledHeading>
           <UnlockButton />
         </div>
       </StyledCardBody>

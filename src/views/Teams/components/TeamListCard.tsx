@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 import { Link } from 'react-router-dom'
-import { Button, Card, CommunityIcon, Flex, Heading, PrizeIcon, Text } from '@pancakeswap-libs/uikit'
+import { Button, Card, CommunityIcon, Flex, Heading, PrizeIcon, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Team } from 'config/constants/types'
 
@@ -108,7 +108,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ rank, team }) => {
             <TeamName>{team.name}</TeamName>
           </Flex>
           <Text as="p" color="textSubtle" pr="24px" mb="16px">
-            {team.description}
+            {t(team.description)}
           </Text>
           <Flex>
             <Flex>

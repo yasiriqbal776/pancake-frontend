@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
-import { Button, Heading, Text, Flex, Checkbox, AutoRenewIcon } from '@pancakeswap-libs/uikit'
+import { Button, Heading, Text, Flex, Checkbox, AutoRenewIcon } from '@pancakeswap/uikit'
 import { useTradingCompetitionContract } from 'hooks/useContract'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
@@ -31,19 +31,19 @@ const RegisterWithProfile: React.FC<CompetitionProps> = ({ profile, onDismiss, o
         setIsConfirming(true)
       })
       .on('receipt', async () => {
-        toastSuccess('You have registered for the competition!')
+        toastSuccess(t('You have registered for the competition!'))
         onDismiss()
         onRegisterSuccess()
       })
       .on('error', (error) => {
-        toastError('Error', error?.message)
+        toastError(t('Error'), error?.message)
         setIsConfirming(false)
       })
   }
 
   return (
     <>
-      <Heading size="md" mb="24px">{`@${profile.username}`}</Heading>
+      <Heading scale="md" mb="24px">{`@${profile.username}`}</Heading>
       <Flex flexDirection="column">
         <Text bold>
           {t('Registering for the competition will make your wallet address publicly visible on the leaderboard.')}

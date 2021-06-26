@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, FlexProps, PrizeIcon, Text } from '@pancakeswap-libs/uikit'
+import { Flex, FlexProps, PrizeIcon, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface PointsLabelProps extends FlexProps {
@@ -13,7 +13,7 @@ const PointsLabel: React.FC<PointsLabelProps> = ({ points, ...props }) => {
   return (
     <Flex alignItems="center" {...props}>
       <PrizeIcon mr="4px" color="textSubtle" />
-      <Text color="textSubtle">{t(`${localePoints} points`, { num: localePoints })}</Text>
+      <Text color="textSubtle">{t('%num% points', { num: localePoints })}</Text>
     </Flex>
   )
 }

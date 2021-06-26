@@ -1,9 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Heading, Text, Link, useTooltip } from '@pancakeswap-libs/uikit'
+import { Flex, Heading, Text, Link, useTooltip } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
+import { ContextApi } from 'contexts/Localization/types'
+import { getBscScanBlockNumberUrl } from 'utils/bscscan'
 
 export interface TimerProps {
-  timerStage?: string
+  prefix?: string
+  suffix?: string
   minutes?: number
   hours?: number
   days?: number
@@ -21,20 +25,34 @@ const StyledTimerFlex = styled(Flex)<{ showTooltip?: boolean }>`
 `
 
 const Timer = ({ minutes, hours, days, showTooltip, HeadingTextComponent, BodyTextComponent }) => {
+  const { t } = useTranslation()
+
   return (
     <StyledTimerFlex alignItems="flex-end" showTooltip={showTooltip}>
-      <HeadingTextComponent mr="2px">{days}</HeadingTextComponent>
-      <BodyTextComponent mr="16px">d</BodyTextComponent>
-      <HeadingTextComponent mr="2px">{hours}</HeadingTextComponent>
-      <BodyTextComponent mr="16px">h</BodyTextComponent>
-      <HeadingTextComponent mr="2px">{minutes}</HeadingTextComponent>
-      <BodyTextComponent>m</BodyTextComponent>
+      {Boolean(days) && (
+        <>
+          <HeadingTextComponent mr="2px">{days}</HeadingTextComponent>
+          <BodyTextComponent mr="16px">{t('d')}</BodyTextComponent>
+        </>
+      )}
+      {Boolean(hours) && (
+        <>
+          <HeadingTextComponent mr="2px">{hours}</HeadingTextComponent>
+          <BodyTextComponent mr="16px">{t('h')}</BodyTextComponent>
+        </>
+      )}
+      {Boolean(minutes) && (
+        <>
+          <HeadingTextComponent mr="2px">{minutes}</HeadingTextComponent>
+          <BodyTextComponent>{t('m')}</BodyTextComponent>
+        </>
+      )}
     </StyledTimerFlex>
   )
 }
 
 const DefaultHeadingTextComponent = ({ children, ...props }) => (
-  <Heading size="lg" {...props}>
+  <Heading scale="lg" {...props}>
     {children}
   </Heading>
 )
@@ -44,19 +62,20 @@ const DefaultBodyTextComponent = ({ children, ...props }) => (
   </Text>
 )
 
-const TooltipContent = ({ blockNumber }) => (
+const TooltipContent = ({ blockNumber, t }: { blockNumber: number; t: ContextApi['t'] }): JSX.Element => (
   <>
     <Text color="body" mb="10px" fontWeight="600">
-      Block {blockNumber}
+      {t('Block %num%', { num: blockNumber })}
     </Text>
-    <Link external href={`https://bscscan.com/block/${blockNumber}`}>
-      View on BscScan
+    <Link external href={getBscScanBlockNumberUrl(blockNumber)}>
+      {t('View on BscScan')}
     </Link>
   </>
 )
 
 const Wrapper: React.FC<TimerProps> = ({
-  timerStage,
+  prefix,
+  suffix,
   minutes,
   hours,
   days,
@@ -65,13 +84,14 @@ const Wrapper: React.FC<TimerProps> = ({
   HeadingTextComponent = DefaultHeadingTextComponent,
   BodyTextComponent = DefaultBodyTextComponent,
 }) => {
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(<TooltipContent blockNumber={blockNumber} />, {
+  const { t } = useTranslation()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(<TooltipContent blockNumber={blockNumber} t={t} />, {
     placement: 'bottom',
   })
   const shouldDisplayTooltip = showTooltip && tooltipVisible
   return (
     <Flex alignItems="flex-end" position="relative">
-      <BodyTextComponent mr="16px">{timerStage}</BodyTextComponent>
+      {prefix && <BodyTextComponent mr="16px">{prefix}</BodyTextComponent>}
       <div ref={targetRef}>
         <Timer
           minutes={minutes}
@@ -83,6 +103,7 @@ const Wrapper: React.FC<TimerProps> = ({
         />
         {shouldDisplayTooltip && tooltip}
       </div>
+      {suffix && <BodyTextComponent ml="16px">{suffix}</BodyTextComponent>}
     </Flex>
   )
 }

@@ -15,9 +15,13 @@ export default {
     97: '0x8175c10383511b3a1C68f9dB222dc14A19CC950e',
     56: '0x5e74094Cd416f55179DBd0E45b1a8ED030e396A1',
   },
+  lotteryV2: {
+    97: '0x374524c998d1E9afC7EB4d2025153b0b3FDCCf29',
+    56: '',
+  },
   multiCall: {
-    56: '0x1ee38d535d541c55c9dae27b12edf090c608e6fb',
-    97: '0x67ADCB4dF3931b0C5Da724058ADC2174a9844412',
+    56: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B',
+    97: '0x8F3273Fb89B075b1645095ABaC6ed17B2d4Bc576',
   },
   pancakeProfile: {
     56: '0xDf4dBf6536201370F95e06A0F8a7a70fE40E388a',
@@ -58,5 +62,9 @@ export default {
   predictions: {
     56: '0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b',
     97: '0x4f3140C74789F1D809420343ea83BcE52B7bbAA5',
+  },
+  chainlinkOracle: {
+    56: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE',
+    97: '',
   },
 }

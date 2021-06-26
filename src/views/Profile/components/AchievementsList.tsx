@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Heading } from '@pancakeswap-libs/uikit'
+import { Flex, Heading } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useAchievements } from 'state/hooks'
 import AchievementCard from './AchievementCard'
@@ -28,7 +28,7 @@ const AchievementsList = () => {
       </Grid>
       {achievements.length === 0 && (
         <Flex alignItems="center" justifyContent="center" style={{ height: '64px' }}>
-          <Heading as="h5" size="md" color="textDisabled">
+          <Heading as="h5" scale="md" color="textDisabled">
             {t('No achievements yet!')}
           </Heading>
         </Flex>

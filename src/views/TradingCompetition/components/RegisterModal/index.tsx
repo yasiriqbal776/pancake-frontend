@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Modal, Button, NoProfileAvatarIcon, Flex } from '@pancakeswap-libs/uikit'
+import { Modal, Button, NoProfileAvatarIcon, Flex } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { CompetitionProps } from '../../types'
 import MakeProfile from './MakeProfile'
@@ -38,7 +38,7 @@ const RegisterModal: React.FC<CompetitionProps> = ({ onDismiss, profile, onRegis
   }
 
   return (
-    <Modal title="Register" onDismiss={onDismiss}>
+    <Modal title={t('Register')} onDismiss={onDismiss}>
       <Flex flexDirection="column" alignItems="center" maxWidth="400px">
         <AvatarWrapper>{profile ? <ProfileAvatar profile={profile} /> : <StyledNoProfileAvatarIcon />}</AvatarWrapper>
         {modalInner()}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { BoxProps, Flex, Text } from '@pancakeswap-libs/uikit'
+import { BoxProps, Flex, Text } from '@pancakeswap/uikit'
 import { BetPosition, Round } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { formatUsd } from '../../helpers'
@@ -10,7 +10,7 @@ interface RoundResultProps extends BoxProps {
   round: Round
 }
 
-const RoundResult: React.FC<RoundResultProps> = ({ round, ...props }) => {
+const RoundResult: React.FC<RoundResultProps> = ({ round, children, ...props }) => {
   const { lockPrice, closePrice, totalAmount } = round
   const betPosition = closePrice > lockPrice ? BetPosition.BULL : BetPosition.BEAR
   const isPositionUp = betPosition === BetPosition.BULL
@@ -36,6 +36,7 @@ const RoundResult: React.FC<RoundResultProps> = ({ round, ...props }) => {
       )}
       {lockPrice && <LockPriceRow lockPrice={lockPrice} />}
       <PrizePoolRow totalAmount={totalAmount} />
+      {children}
     </RoundResultBox>
   )
 }

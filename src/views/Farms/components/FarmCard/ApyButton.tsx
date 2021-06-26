@@ -1,6 +1,6 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import { IconButton, useModal, CalculateIcon } from '@pancakeswap-libs/uikit'
+import { IconButton, useModal, CalculateIcon } from '@pancakeswap/uikit'
 import ApyCalculatorModal from 'components/ApyCalculatorModal'
 import { useTranslation } from 'contexts/Localization'
 
@@ -15,10 +15,11 @@ const ApyButton: React.FC<ApyButtonProps> = ({ lpLabel, cakePrice, apr, addLiqui
   const { t } = useTranslation()
   const [onPresentApyModal] = useModal(
     <ApyCalculatorModal
-      linkLabel={`${t('Get')} ${lpLabel}`}
+      linkLabel={t('Get %symbol%', { symbol: lpLabel })}
       tokenPrice={cakePrice.toNumber()}
       apr={apr}
       linkHref={addLiquidityUrl}
+      isFarm
     />,
   )
 

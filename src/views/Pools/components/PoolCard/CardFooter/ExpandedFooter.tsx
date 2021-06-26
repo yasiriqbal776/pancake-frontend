@@ -1,7 +1,7 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
-import { getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import {
   Flex,
@@ -12,20 +12,22 @@ import {
   TimerIcon,
   Skeleton,
   useTooltip,
-} from '@pancakeswap-libs/uikit'
+  Button,
+  Link,
+  HelpIcon,
+} from '@pancakeswap/uikit'
 import { BASE_BSC_SCAN_URL, BASE_URL } from 'config'
-import { useBlock } from 'state/hooks'
+import { useBlock, useCakeVault } from 'state/hooks'
 import { Pool } from 'state/types'
 import { getAddress, getCakeVaultAddress } from 'utils/addressHelpers'
 import { registerToken } from 'utils/wallet'
+import { getBscScanBlockCountdownUrl } from 'utils/bscscan'
 import Balance from 'components/Balance'
+import { getPoolBlockInfo } from 'views/Pools/helpers'
 
 interface ExpandedFooterProps {
   pool: Pool
   account: string
-  performanceFee?: number
-  isAutoVault?: boolean
-  totalCakeInVault?: BigNumber
 }
 
 const ExpandedWrapper = styled(Flex)`
@@ -35,76 +37,100 @@ const ExpandedWrapper = styled(Flex)`
   }
 `
 
-const ExpandedFooter: React.FC<ExpandedFooterProps> = ({
-  pool,
-  account,
-  performanceFee = 0,
-  isAutoVault = false,
-  totalCakeInVault,
-}) => {
+const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
   const { t } = useTranslation()
   const { currentBlock } = useBlock()
-  const { stakingToken, earningToken, totalStaked, startBlock, endBlock, isFinished, contractAddress } = pool
+  const {
+    totalCakeInVault,
+    fees: { performanceFee },
+  } = useCakeVault()
+
+  const {
+    stakingToken,
+    earningToken,
+    totalStaked,
+    startBlock,
+    endBlock,
+    stakingLimit,
+    contractAddress,
+    sousId,
+    isAutoVault,
+  } = pool
 
   const tokenAddress = earningToken.address ? getAddress(earningToken.address) : ''
   const poolContractAddress = getAddress(contractAddress)
   const cakeVaultContractAddress = getCakeVaultAddress()
-  const imageSrc = `${BASE_URL}/images/tokens/${earningToken.symbol.toLowerCase()}.png`
+  const imageSrc = `${BASE_URL}/images/tokens/${tokenAddress}.png`
   const isMetaMaskInScope = !!(window as WindowChain).ethereum?.isMetaMask
+  const isManualCakePool = sousId === 0
 
-  const shouldShowBlockCountdown = Boolean(!isFinished && startBlock && endBlock)
-  const blocksUntilStart = Math.max(startBlock - currentBlock, 0)
-  const blocksRemaining = Math.max(endBlock - currentBlock, 0)
-  const hasPoolStarted = blocksUntilStart === 0 && blocksRemaining > 0
+  const { shouldShowBlockCountdown, blocksUntilStart, blocksRemaining, hasPoolStarted, blocksToDisplay } =
+    getPoolBlockInfo(pool, currentBlock)
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('Subtracted automatically from each yield harvest and burned.'),
-    { placement: 'bottom-end' },
+    { placement: 'bottom-start' },
   )
+
+  const getTotalStakedBalance = () => {
+    if (isAutoVault) {
+      return getBalanceNumber(totalCakeInVault, stakingToken.decimals)
+    }
+    if (isManualCakePool) {
+      const manualCakeTotalMinusAutoVault = new BigNumber(totalStaked).minus(totalCakeInVault)
+      return getBalanceNumber(manualCakeTotalMinusAutoVault, stakingToken.decimals)
+    }
+    return getBalanceNumber(totalStaked, stakingToken.decimals)
+  }
+
+  const {
+    targetRef: totalStakedTargetRef,
+    tooltip: totalStakedTooltip,
+    tooltipVisible: totalStakedTooltipVisible,
+  } = useTooltip(t('Total amount of %symbol% staked in this pool', { symbol: stakingToken.symbol }), {
+    placement: 'bottom',
+  })
 
   return (
     <ExpandedWrapper flexDirection="column">
       <Flex mb="2px" justifyContent="space-between" alignItems="center">
-        <Text small>{t('Total staked:')}</Text>
+        <Text small>{t('Total staked')}:</Text>
         <Flex alignItems="flex-start">
-          {totalStaked ? (
+          {totalStaked && totalStaked.gte(0) ? (
             <>
-              <Balance
-                fontSize="14px"
-                value={
-                  isAutoVault
-                    ? getBalanceNumber(totalCakeInVault, stakingToken.decimals)
-                    : getBalanceNumber(totalStaked, stakingToken.decimals)
-                }
-              />
-              <Text ml="4px" fontSize="14px">
-                {stakingToken.symbol}
-              </Text>
+              <Balance small value={getTotalStakedBalance()} decimals={0} unit={` ${stakingToken.symbol}`} />
+              <span ref={totalStakedTargetRef}>
+                <HelpIcon color="textSubtle" width="20px" ml="6px" mt="4px" />
+              </span>
             </>
           ) : (
             <Skeleton width="90px" height="21px" />
           )}
+          {totalStakedTooltipVisible && totalStakedTooltip}
         </Flex>
       </Flex>
+      {stakingLimit && stakingLimit.gt(0) && (
+        <Flex mb="2px" justifyContent="space-between">
+          <Text small>{t('Max. stake per user')}:</Text>
+          <Text small>{`${getFullDisplayBalance(stakingLimit, stakingToken.decimals, 0)} ${stakingToken.symbol}`}</Text>
+        </Flex>
+      )}
       {shouldShowBlockCountdown && (
         <Flex mb="2px" justifyContent="space-between" alignItems="center">
-          <Text small>{hasPoolStarted ? t('End') : t('Start')}:</Text>
-          <Flex alignItems="center">
-            {blocksRemaining || blocksUntilStart ? (
-              <Balance
-                color="primary"
-                fontSize="14px"
-                value={hasPoolStarted ? blocksRemaining : blocksUntilStart}
-                decimals={0}
-              />
-            ) : (
-              <Skeleton width="54px" height="21px" />
-            )}
-            <Text ml="4px" color="primary" small>
-              {t('blocks')}
-            </Text>
-            <TimerIcon ml="4px" color="primary" />
-          </Flex>
+          <Text small>{hasPoolStarted ? t('Ends in') : t('Starts in')}:</Text>
+          {blocksRemaining || blocksUntilStart ? (
+            <Flex alignItems="center">
+              <Link external href={getBscScanBlockCountdownUrl(hasPoolStarted ? endBlock : startBlock)}>
+                <Balance small value={blocksToDisplay} decimals={0} color="primary" />
+                <Text small ml="4px" color="primary" textTransform="lowercase">
+                  {t('Blocks')}
+                </Text>
+                <TimerIcon ml="4px" color="primary" />
+              </Link>
+            </Flex>
+          ) : (
+            <Skeleton width="54px" height="21px" />
+          )}
         </Flex>
       )}
       {isAutoVault && (
@@ -121,16 +147,21 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({
         </Flex>
       )}
       <Flex mb="2px" justifyContent="flex-end">
-        <LinkExternal bold={false} small href={earningToken.projectLink}>
+        <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} bold={false} small>
+          {t('Info site')}
+        </LinkExternal>
+      </Flex>
+      <Flex mb="2px" justifyContent="flex-end">
+        <LinkExternal href={earningToken.projectLink} bold={false} small>
           {t('View Project Site')}
         </LinkExternal>
       </Flex>
       {poolContractAddress && (
         <Flex mb="2px" justifyContent="flex-end">
           <LinkExternal
+            href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
             bold={false}
             small
-            href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
           >
             {t('View Contract')}
           </LinkExternal>
@@ -138,14 +169,17 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({
       )}
       {account && isMetaMaskInScope && tokenAddress && (
         <Flex justifyContent="flex-end">
-          <Text
-            color="primary"
-            small
+          <Button
+            variant="text"
+            p="0"
+            height="auto"
             onClick={() => registerToken(tokenAddress, earningToken.symbol, earningToken.decimals, imageSrc)}
           >
-            Add to Metamask
-          </Text>
-          <MetamaskIcon ml="4px" />
+            <Text color="primary" fontSize="14px">
+              {t('Add to Metamask')}
+            </Text>
+            <MetamaskIcon ml="4px" />
+          </Button>
         </Flex>
       )}
     </ExpandedWrapper>

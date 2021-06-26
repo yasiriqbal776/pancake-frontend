@@ -1,7 +1,7 @@
 import React from 'react'
-import { Menu as UikitMenu } from '@pancakeswap-libs/uikit'
+import { Menu as UikitMenu } from '@pancakeswap/uikit'
 import { useWeb3React } from '@web3-react/core'
-import { languageList, Language } from 'config/localization/languages'
+import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import useAuth from 'hooks/useAuth'
@@ -14,7 +14,7 @@ const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
   const cakePriceUsd = usePriceCakeBusd()
   const { profile } = useProfile()
-  const { currentLanguage, setLanguage } = useTranslation()
+  const { currentLanguage, setLanguage, t } = useTranslation()
 
   return (
     <UikitMenu
@@ -25,11 +25,9 @@ const Menu = (props) => {
       toggleTheme={toggleTheme}
       currentLang={currentLanguage.code}
       langs={languageList}
-      setLang={(langType) => {
-        setLanguage(langType as Language)
-      }}
+      setLang={setLanguage}
       cakePriceUsd={cakePriceUsd.toNumber()}
-      links={config}
+      links={config(t)}
       profile={{
         username: profile?.username,
         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,

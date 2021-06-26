@@ -1,5 +1,5 @@
 import React from 'react'
-import { AutoRenewIcon, Flex, Heading } from '@pancakeswap-libs/uikit'
+import { AutoRenewIcon, Flex, Heading } from '@pancakeswap/uikit'
 import orderBy from 'lodash/orderBy'
 import { useTeams } from 'state/hooks'
 import Page from 'components/layout/Page'
@@ -17,7 +17,7 @@ const Teams = () => {
     <Page>
       <TeamHeader />
       <Flex alignItems="center" justifyContent="space-between" mb="32px">
-        <Heading size="xl">{t('Teams')}</Heading>
+        <Heading scale="xl">{t('Teams')}</Heading>
         {isLoading && <AutoRenewIcon spin />}
       </Flex>
       {topTeams.map((team, index) => (

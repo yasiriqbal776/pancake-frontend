@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { Heading, Text } from '@pancakeswap-libs/uikit'
+import { Heading, Text } from '@pancakeswap/uikit'
 import { BigNumber } from 'bignumber.js'
 import { usePriceCakeBusd } from 'state/hooks'
 import CardBusdValue from '../../Home/components/CardBusdValue'
@@ -75,17 +75,17 @@ const PrizeGrid: React.FC<PrizeGridProps> = ({
       </GridItem>
       {/* 4 matches row */}
       <GridItem>
-        <Heading size="md">4</Heading>
+        <Heading scale="md">4</Heading>
       </GridItem>
       {pastDraw && (
         <PastDrawGridItem>
-          <RightAlignedHeading size="md">{jackpotMatches}</RightAlignedHeading>
+          <RightAlignedHeading scale="md">{jackpotMatches}</RightAlignedHeading>
         </PastDrawGridItem>
       )}
       <GridItem>
-        <RightAlignedHeading size="md">
+        <RightAlignedHeading scale="md">
           {fourMatchesAmount.toLocaleString()}
-          {!pastDraw && !cakeBusdPrice.eq(0) && <CardBusdValue value={getCakeBusdValue(fourMatchesAmount)} />}
+          {!pastDraw && cakeBusdPrice.gt(0) && <CardBusdValue value={getCakeBusdValue(fourMatchesAmount)} />}
         </RightAlignedHeading>
       </GridItem>
       {/* 3 matches row */}
@@ -100,7 +100,7 @@ const PrizeGrid: React.FC<PrizeGridProps> = ({
       <GridItem>
         <RightAlignedText>
           {threeMatchesAmount.toLocaleString()}
-          {!pastDraw && !cakeBusdPrice.eq(0) && <CardBusdValue value={getCakeBusdValue(threeMatchesAmount)} />}
+          {!pastDraw && cakeBusdPrice.gt(0) && <CardBusdValue value={getCakeBusdValue(threeMatchesAmount)} />}
         </RightAlignedText>
       </GridItem>
       {/* 2 matches row */}
@@ -115,12 +115,12 @@ const PrizeGrid: React.FC<PrizeGridProps> = ({
       <GridItem>
         <RightAlignedText>
           {twoMatchesAmount.toLocaleString()}
-          {!pastDraw && !cakeBusdPrice.eq(0) && <CardBusdValue value={getCakeBusdValue(twoMatchesAmount)} />}
+          {!pastDraw && cakeBusdPrice.gt(0) && <CardBusdValue value={getCakeBusdValue(twoMatchesAmount)} />}
         </RightAlignedText>
       </GridItem>
       {/* Burn row */}
       <GridItem marginBottom="0">
-        <Text>{t(`${pastDraw ? 'Burned' : 'To burn'}`)}:</Text>
+        <Text>{t(pastDraw ? 'Burned' : 'To burn')}:</Text>
       </GridItem>
       {pastDraw ? (
         <>

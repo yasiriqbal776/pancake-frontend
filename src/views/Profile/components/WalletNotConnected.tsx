@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Text } from '@pancakeswap-libs/uikit'
+import { Heading, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import UnlockButton from 'components/UnlockButton'
 
@@ -8,7 +8,7 @@ const WalletNotConnected = () => {
 
   return (
     <div>
-      <Heading size="xl" mb="8px">
+      <Heading scale="xl" mb="8px">
         {t('Oops!')}
       </Heading>
       <Text as="p" mb="16px">

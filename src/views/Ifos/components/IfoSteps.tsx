@@ -1,18 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import every from 'lodash/every'
-import {
-  Stepper,
-  Step,
-  StepStatus,
-  Card,
-  CardBody,
-  Heading,
-  Text,
-  Button,
-  Link,
-  OpenNewIcon,
-} from '@pancakeswap-libs/uikit'
+import { Stepper, Step, StepStatus, Card, CardBody, Heading, Text, Button, Link, OpenNewIcon } from '@pancakeswap/uikit'
 import { BASE_ADD_LIQUIDITY_URL } from 'config'
 import { Ifo } from 'config/constants/types'
 import { WalletIfoData } from 'hooks/ifo/types'
@@ -44,7 +33,7 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
   const { poolBasic, poolUnlimited } = walletIfoData
   const { hasProfile } = useProfile()
   const { t } = useTranslation()
-  const balance = useTokenBalance(getAddress(ifo.currency.address))
+  const { balance } = useTokenBalance(getAddress(ifo.currency.address))
   const stepsValidationStatus = [
     hasProfile,
     balance.isGreaterThan(0),
@@ -67,10 +56,10 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
         return (
           <CardBody>
             <Heading as="h4" color="secondary" mb="16px">
-              Activate your Profile
+              {t('Activate your Profile')}
             </Heading>
             <Text color="textSubtle" small mb="16px">
-              You’ll need an active PancakeSwap Profile to take part in an IFO!
+              {t('You’ll need an active PancakeSwap Profile to take part in an IFO!')}
             </Text>
             {isStepValid ? (
               <Text color="success" bold>
@@ -78,7 +67,7 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
               </Text>
             ) : (
               <Button as={Link} href="/profile">
-                {t('Activate you profile')}
+                {t('Activate your Profile')}
               </Button>
             )}
           </CardBody>
@@ -87,11 +76,11 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
         return (
           <CardBody>
             <Heading as="h4" color="secondary" mb="16px">
-              Get CAKE-BNB LP Tokens
+              {t('Get CAKE-BNB LP Tokens')}
             </Heading>
             <Text color="textSubtle" small>
-              Stake CAKE and BNB in the liquidity pool to get LP tokens. <br />
-              You’ll spend them to buy IFO sale tokens.
+              {t('Stake CAKE and BNB in the liquidity pool to get LP tokens.')} <br />
+              {t('You’ll spend them to buy IFO sale tokens.')}
             </Text>
             <Button
               as={Link}
@@ -108,11 +97,11 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
         return (
           <CardBody>
             <Heading as="h4" color="secondary" mb="16px">
-              Commit LP Tokens
+              {t('Commit LP Tokens')}
             </Heading>
             <Text color="textSubtle" small>
-              When the IFO sales are live, you can “commit” your LP tokens to buy the tokens being sold. <br />
-              We recommend committing to the Basic Sale first, but you can do both if you want.
+              {t('When the IFO sales are live, you can “commit” your LP tokens to buy the tokens being sold.')} <br />
+              {t('We recommend committing to the Basic Sale first, but you can do both if you like.')}
             </Text>
           </CardBody>
         )
@@ -120,11 +109,12 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
         return (
           <CardBody>
             <Heading as="h4" color="secondary" mb="16px">
-              Claim your tokens and achievement
+              {t('Claim your tokens and achievement')}
             </Heading>
             <Text color="textSubtle" small>
-              After the IFO sales finish, you can claim any IFO tokens that you bought, and any unspent CAKE-BNB LP
-              tokens will be returned to your wallet.
+              {t(
+                'After the IFO sales finish, you can claim any IFO tokens that you bought, and any unspent CAKE-BNB LP tokens will be returned to your wallet.',
+              )}
             </Text>
           </CardBody>
         )
@@ -135,7 +125,7 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
 
   return (
     <Wrapper>
-      <Heading as="h2" size="xl" color="secondary" mb="24px" textAlign="center">
+      <Heading as="h2" scale="xl" color="secondary" mb="24px" textAlign="center">
         {t('How to Take Part')}
       </Heading>
       <Stepper>
